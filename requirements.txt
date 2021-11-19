@@ -1,0 +1,4 @@
+scipy
+git+https://github.com/sagecontinuum/sage-cli.git
+waggle[vision] @ https://github.com/waggle-sensor/pywaggle/releases/download/0.46.0/waggle-0.46.0-py3-none-any.whl
+
