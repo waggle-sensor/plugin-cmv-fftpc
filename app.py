@@ -8,7 +8,6 @@ import argparse
 import sys
 import time
 
-import numpy as np
 
 from waggle import plugin
 from waggle.data.vision import Camera
@@ -23,8 +22,10 @@ from cmv import flowVectorSplit, meanCMV
 
 
 def main(args):
+    """ Takes in input args and run the whole CMV workflow.
+    """
     
-    #Create a dictionery to save setting
+    #Create a dictionary to save settings
     inf = getInfoDict(args,  NDist=1, error_thres=6, eps=0.2)
 
     plugin.init()
@@ -32,7 +33,7 @@ def main(args):
     # this statement to change for live stream from camera.
     camera = Camera(plugin.Path(args.input))
     
-    #get video frame and crop info into the dictionery.
+    #get video frame and crop info into the dictionary.
     inf = cropMarginInfo(camera, inf)
 
     #Counting frames and time-steps for netcdf output requirment. 
@@ -58,12 +59,17 @@ def main(args):
         sky_curr = sky_new
         
         #Split the image and comput flow for all image blocks
+        start_time = time.time_ns()
         cmv_x, cmv_y = flowVectorSplit(sky_prev, sky_curr, inf)
         u_mean,  v_mean = meanCMV(cmv_x, cmv_y)
-        
-        plugin.publish('env.cmv.mean.u', u_mean)
-        plugin.publish('env.cmv.mean.v', v_mean)
-        plugin.publish('time', frame_time)
+        end_time = time.time_ns()
+        inference_time = end_time-start_time
+
+        # Publish the output.
+        plugin.publish('atm.cmv.mean.u', u_mean)
+        plugin.publish('atm.cmv.mean.v', v_mean)
+        plugin.publish('atm.cmv.time', frame_time)
+        plugin.publish('plg.inf.time_ns', inference_time)
         
         #Exit for one-shot
         sys.exit()

@@ -65,38 +65,6 @@ def flipVectors(cmv_x, cmv_y):
 
 
 
-def rmLargeValues(cmv_x, cmv_y, std_fact=3):
-    """
-    Remove large anomalous values. Not using direction.
-
-    Parameters
-    ----------
-    cmv_x : u component of CMV.
-    cmv_y : v component of CMV.
-    
-    std_fact : TYPE, optional
-        DESCRIPTION. check the default value.
-
-    Returns
-    -------
-    cmv_x : Corrected u component of CMV.
-    cmv_y : Corrected v component of CMV.
-        DESCRIPTION.
-
-    """
-    
-    vmag, vdir = vectorMagnitudeDirection(cmv_x, cmv_y)
-    vmag_std = vmag[vmag>0].std()
-    
-    
-    for i in range(0, cmv_x.size):
-            if abs(vmag[i]) > vmag_std * std_fact:
-                cmv_x[i] = 0
-                cmv_y[i] = 0
-    
-    return cmv_x, cmv_y
-
-
 def rmLargeMagnitudes(cmv_x, cmv_y, v_max):
     """
     Remove large anomalous values. Not using direction.
@@ -188,7 +156,7 @@ def normFluctuation(vel_comp, d, eps):
 
 def vectorMagnitudeDirection(cmv_x, cmv_y, std_fact=1):
     """
-    incomplete function but working
+
 
     Parameters
     ----------
@@ -271,6 +239,7 @@ def motionVector(fft_mat):
 
 def split2DArray(arr2d, nblock):
     """ Splits sky into given number of blocks. 
+ 
     Not tested for uneven shapes or nonfitting arrays """
     split_0 = np.array_split(arr2d, nblock, axis=0)
     split_arr=[]
@@ -283,6 +252,8 @@ def split2DArray(arr2d, nblock):
 
 
 def meanCMV(u, v):
+    """ Computes mean field CMV.
+    """
     if(np.all(u==0)):
         u_mean=0
     else:

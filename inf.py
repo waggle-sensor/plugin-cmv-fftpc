@@ -8,6 +8,8 @@ import sys
 import numpy as np
 
 def getInfoDict(args, NDist=1, error_thres=5, eps=0.2):
+    """ Takes input args and save it in a dictionary.
+    """
     inf = dict()
     inf['input'] = args.input
     inf['nblock'] = args.k
@@ -35,6 +37,8 @@ def cropMarginInfo(camera, inf):
 
 
 def getCropMargin(inf):
+    """ Computes crop area from the settings from 'inf' and appends it to the same dictionary. 
+    """
     crop_len = inf['block_len'] * inf['nblock']
     small_dim = min([inf['frame_height'], inf['frame_width']])
     
@@ -58,6 +62,8 @@ def getCropMargin(inf):
     return inf
 
 def cropFrame(sample, fcount, inf):
+    """ Extract and crops frame using crop margins from the 'inf'.
+    """
     frame = sample.data
     sky = frame[inf['y1']:inf['y2'], inf['x1']:inf['x2'], inf['channel']]
     fcount += 1
