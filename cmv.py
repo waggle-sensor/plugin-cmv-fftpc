@@ -101,6 +101,7 @@ def rmSpuriousVectors(cmv_x, cmv_y, info):
     norm_fluct_u, norm_fluct_v  = getNormMedianFluctuation(cmv_x, cmv_y, info)
     norm_fluct_mag = np.sqrt(norm_fluct_u**2 + norm_fluct_v**2)
     error_flag = norm_fluct_mag > info['WS05-error_thres']
+ 
     cmv_x[np.where(error_flag)] = 0
     cmv_y[np.where(error_flag)] = 0
     
@@ -206,7 +207,10 @@ def fftCrossCov(im1, im2):
     fft1_conj = np.conj(np.fft.fft2(im1))
     fft2 = np.fft.fft2(im2)
     normalize = abs(fft2 * fft1_conj)
-    min_value = normalize[normalize >0].min()
+    try:  min_value = normalize[(normalize > 0)].min()
+    except ValueError:  #raised if empty.
+       min_value=0.01
+       pass  
     normalize[normalize == 0] = min_value  # prevent divide by zero error
     cross_power_spectrum = (fft2 * fft1_conj)/normalize
     crosscov = np.fft.ifft2(cross_power_spectrum)

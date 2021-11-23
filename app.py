@@ -70,6 +70,7 @@ def main(args):
         plugin.publish('atm.cmv.mean.v', v_mean)
         plugin.publish('atm.cmv.time', frame_time)
         plugin.publish('plg.inf.time_ns', inference_time)
+	#plugin.upload_file()
         
         #Exit for one-shot
         sys.exit()
