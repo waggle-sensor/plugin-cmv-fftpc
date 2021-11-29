@@ -1,6 +1,6 @@
 name: "cmv-fftpc"
 description: "Cloud Motion Estimator for the Sky Camera"
-version: "0.21.11.19"
+version: "0.21.11.29"
 authors: "Bhupendra Raut <braut@anl.gov>"
 license: "MIT license"
 keywords: "FFT, Motion Vector, phase correlation"
