@@ -31,7 +31,7 @@ def main(args):
     plugin.init()
     
     # this statement to change for live stream from camera.
-    camera = Camera(plugin.Path(args.input))
+    camera = Camera(args.input)
     
     #get video frame and crop info into the dictionary.
     inf = cropMarginInfo(camera, inf)
