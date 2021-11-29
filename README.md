@@ -27,3 +27,7 @@ Model loading time: NA
 [1] J. A. Leese, C. S. Novak, and B. B. Clark, “An automated technique for obtaining cloud motion from geosynchronous satellite data using cross-correlation,” J. Appl. Meteor., vol. 10, no. 1, pp. 118–132, 1971.  
 [2] J. Westerweel and F.Scarano, “Universal outlier detection for PIV data,” Experiments in Fluids, vol. 39, no. 6, pp. 1096–1100, 2005. 
 
+# Credits
+ecr-icon.jpg  Wheat Field with Cypresses, Vincent van Gogh (Dutch), 1889.
+https://www.metmuseum.org/art/collection/search/436535
+https://www.metmuseum.org/about-the-met/policies-and-documents/image-resources
