@@ -1,9 +1,9 @@
-name: "cmv-fftpc"
+name: "cloudmotion"
 description: "Cloud Motion Estimator for the Sky Camera"
-version: "0.21.11.29"
+version: "0.21.12.3"
 authors: "Bhupendra Raut <braut@anl.gov>"
 license: "MIT license"
-keywords: "FFT, Motion Vector, phase correlation"
+keywords: "FFT, phase correlation, hemispheric sky imager"
 homepage: "https://github.com/waggle-sensor/plugin-cmv-fftpc"
 source:
   architectures:
