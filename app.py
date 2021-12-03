@@ -26,7 +26,7 @@ def main(args):
     """
     
     #Create a dictionary to save settings
-    inf = getInfoDict(args,  NDist=1, error_thres=6, eps=0.2)
+    inf = getInfoDict(args, NDist=1, error_thres=6, eps=0.2)
 
     plugin.init()
     
@@ -73,7 +73,7 @@ def main(args):
 	#plugin.upload_file()
         
         #Exit for one-shot
-        sys.exit()
+        exit()
         
         if inf['interval'] > 0:
             time.sleep(inf['interval'])
@@ -88,7 +88,8 @@ if __name__ == "__main__":
                                      motion vectors in the hemispheric camera''')
     parser.add_argument('--input', type=str, 
                         help='Path to an input video or images.', 
-                        default="/app/test-data/sgptsimovieS01.a1.20160726.000000.mpg")   
+                        default="file://test-data/sgptsimovieS01.a1.20160726.000000.mpg")
+#                        default="/app/test-data/sgptsimovieS01.a1.20160726.000000.mpg")   
     parser.add_argument('--i', type=int, 
                         help='Time skip in seconds.', default=30)
     parser.add_argument('--k', type=int, 
@@ -101,5 +102,13 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     main(args)
+
+
+
+
+
+
+
+
 
 
