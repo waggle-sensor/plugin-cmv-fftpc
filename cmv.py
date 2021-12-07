@@ -13,26 +13,10 @@ from scipy import ndimage
 #import matplotlib.pyplot as plt
 
 def flowVectorSplit(array1, array2, info):
-    """
-    Splits camera view into a grid, and computes flow vectors for each block.
+    """ Splits camera view into a grid, and computes flow vectors for each block.
 
-    Parameters
-    ----------
-    array1 : Numpy array
-        First image
-    array2 : Numpy array
-        Second image
-    nblock : Integer
-        Number of blocks in x and y direction.
-
-    Returns
-    -------
-    cmv_x : u component of CMV.
-    cmv_y : v component of CMV.
-    
     @ToDo: nblocks should be provided for both x and y direction to accomodate
     non-squared area, if needed.
-    
     """
     nblock = info['nblock']
     
@@ -51,38 +35,13 @@ def flowVectorSplit(array1, array2, info):
     
     cmv_x, cmv_y, nmf_u, nmf_v = rmSpuriousVectors(cmv_x, cmv_y, info)
     
-    cmv_x, cmv_y = flipVectors(cmv_x, cmv_y)
-    
     return cmv_x, cmv_y
-
-
-
-def flipVectors(cmv_x, cmv_y):
-    cmv_x_correct = np.flip(cmv_x, axis=0)
-    cmv_y_correct = np.flip(-cmv_y, axis=0)
-    
-    return cmv_x_correct, cmv_y_correct
-
 
 
 def rmLargeMagnitudes(cmv_x, cmv_y, v_max):
     """
     Remove large anomalous values. Not using direction.
 
-    Parameters
-    ----------
-    cmv_x : u component of CMV.
-    cmv_y : v component of CMV.
-    
-    std_fact : TYPE, optional
-        DESCRIPTION. check the default value.
-
-    Returns
-    -------
-    cmv_x : Corrected u component of CMV.
-    cmv_y : Corrected v component of CMV.
-        DESCRIPTION.
-        
     @ToDo: Trim the cmv (not remove) for large magnitude by the ratio 
     vmag/v_max.
     """
@@ -156,26 +115,6 @@ def normFluctuation(vel_comp, d, eps):
 
 
 def vectorMagnitudeDirection(cmv_x, cmv_y, std_fact=1):
-    """
-
-
-    Parameters
-    ----------
-    cmv_x : TYPE
-        DESCRIPTION.
-    cmv_y : TYPE
-        DESCRIPTION.
-    std_fact : TYPE, optional
-        DESCRIPTION. The default is 1.
-
-    Returns
-    -------
-    vec_mag : TYPE
-        DESCRIPTION.
-    TYPE
-        DESCRIPTION.
-
-    """
     vec_mag = np.sqrt(cmv_x*cmv_x + cmv_y*cmv_y)
     vec_dir = np.rad2deg(np.arctan2(cmv_y,cmv_x)) % 360
     
@@ -221,7 +160,8 @@ def fftCrossCov(im1, im2):
 def motionVector(fft_mat):
     """ Rearranges the cross correlation matrix so that 'zero' frequency or DC
     component is in the middle of the matrix. Taken from stackoverflow Que.
-    30630632. """
+    30630632.
+    """
     if type(fft_mat) is np.ndarray:
         rs = np.ceil(fft_mat.shape[0]/2).astype('int')
         cs = np.ceil(fft_mat.shape[1]/2).astype('int')
