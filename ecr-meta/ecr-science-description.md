@@ -1,5 +1,4 @@
-# plugin-cmv-fftpc
-The plugin uses the phase correlation method to compute cloud motion vectors from the Waggle sky camera images.
+The plugin uses the phase correlation method to compute cloud motion vectors from the Sage sky camera images.
 
 # Science
 Converting still cloud images into a time series of motion vectors has implications in reporting local weather conditions and short-term forecasting of solar irradiance. In association with the other plugins namely Cloud Cover and Weather Classification, the output of the plugin will help in further classification of the cloud types and their movements with heights that can be used for meteorological studies.  
