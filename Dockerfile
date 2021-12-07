@@ -1,6 +1,5 @@
 FROM waggle/plugin-base:1.1.1-base
 
-
 COPY requirements.txt /app/
 RUN pip3 install --no-cache-dir --upgrade -r /app/requirements.txt
 RUN pip3 install --no-cache-dir --upgrade git+https://github.com/waggle-sensor/pywaggle # buildkit
@@ -16,6 +15,8 @@ COPY test-data/sgptsimovieS01.a1.20160726.000000.mpg /app/test-data/
 #RUN sage-cli.py storage files download ${BUCKET_ID_MODEL} model640.pt --target /app/model640.pt \
 #  && sage-cli.py storage files download ${BUCKET_ID_MODEL} yolov4.cfg --target /app/yolov4.cfg \
 #  && sage-cli.py storage files download ${BUCKET_ID_MODEL} yolov4.weights --target /app/yolov4.weights
+
+RUN chmod +x /app/app.py
 
 WORKDIR /app
 ENTRYPOINT ["python3", "/app/app.py"]

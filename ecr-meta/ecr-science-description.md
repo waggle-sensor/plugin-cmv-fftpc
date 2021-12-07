@@ -23,6 +23,25 @@ Model loading time: NA
    '--l'             length of a square block,  l x l in pixels (Default l=40).  
    '--c'            RGB channels, 0=R, 1=G, 2=B (Default 0 i.e. Red).
 
+# Funding
+https://www.nsf.gov/awardsearch/showAward?AWD_ID=1935984
+
+# Collaborators
+Bhupendra Raut,
+Dario Dematties Reyes,
+Joseph Swantek,
+Neal Conrad,
+Nicola Ferrier,
+Pete Beckman,
+Raj Sankaran,
+Robert Jackson,
+Scott Collis,
+Sean Shahkarami,
+Seongha Park,
+Sergey Shemyakin,
+Wolfgang Gerlach,
+Yongho kim
+
 # References
 [1] J. A. Leese, C. S. Novak, and B. B. Clark, “An automated technique for obtaining cloud motion from geosynchronous satellite data using cross-correlation,” J. Appl. Meteor., vol. 10, no. 1, pp. 118–132, 1971.  
 [2] J. Westerweel and F.Scarano, “Universal outlier detection for PIV data,” Experiments in Fluids, vol. 39, no. 6, pp. 1096–1100, 2005. 
