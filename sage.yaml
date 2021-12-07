@@ -1,6 +1,6 @@
-name: "cloudmotion"
+name: "cloud-motion"
 description: "Cloud Motion Estimator for the Sky Camera"
-version: "0.21.12.3"
+version: "0.21.12.7"
 authors: "Bhupendra Raut <braut@anl.gov>"
 license: "MIT license"
 keywords: "FFT, phase correlation, hemispheric sky imager"
