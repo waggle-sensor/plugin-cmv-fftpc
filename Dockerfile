@@ -1,4 +1,4 @@
-FROM waggle/plugin-base:1.1.1-base\
+FROM waggle/plugin-base:1.1.1-base
 RUN pip3 install --no-cache-dir --upgrade git+https://github.com/waggle-sensor/pywaggle # buildkit
 
 COPY requirements.txt /app/
