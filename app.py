@@ -27,9 +27,7 @@ def main(args):
     #Create a dictionary to save settings
     inf = getInfoDict(args, NDist=1, error_thres=6, eps=0.2)
 
-    with Plugin() as plugin:    
-        camera = Camera(args.input)
-        
+    with Plugin() as plugin, Camera(args.input) as camera:
         #get video frame and crop info into the dictionary.
         inf = cropMarginInfo(camera, inf)
     
