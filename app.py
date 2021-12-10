@@ -8,8 +8,7 @@ import argparse
 import sys
 import time
 
-
-from waggle import plugin
+from waggle.plugin import Plugin
 from waggle.data.vision import Camera
 
 
@@ -28,56 +27,53 @@ def main(args):
     #Create a dictionary to save settings
     inf = getInfoDict(args, NDist=1, error_thres=6, eps=0.2)
 
-    plugin.init()
+    with Plugin() as plugin:    
+        camera = Camera(args.input)
+        
+        #get video frame and crop info into the dictionary.
+        inf = cropMarginInfo(camera, inf)
     
-    # this statement to change for live stream from camera.
-    camera = Camera(args.input)
+        #Counting frames and time-steps for netcdf output requirment. 
+        fcount = 0
+        first_frame = True
+        oneshot = True
+        
+        while oneshot:
+            sample = camera.snapshot()
+            frame_time = sample.timestamp
+            fcount, sky_new = cropFrame(sample, fcount, inf)
     
-    #get video frame and crop info into the dictionary.
-    inf = cropMarginInfo(camera, inf)
-
-    #Counting frames and time-steps for netcdf output requirment. 
-    fcount = 0
-    first_frame = True
-    
-    while True:
-        sample = camera.snapshot()
-        frame_time = sample.timestamp
-        fcount, sky_new = cropFrame(sample, fcount, inf)
-
-        #Store the sky data for first the frame and and wait for the next frame.
-        if first_frame:
+            #Store the sky data for first the frame and and wait for the next frame.
+            if first_frame:
+                sky_curr = sky_new
+                first_frame = False
+                if inf['interval'] > 0:
+                    time.sleep(inf['interval'])
+                continue
+        
+            
+            #move one frame forward
+            sky_prev = sky_curr
             sky_curr = sky_new
-            first_frame = False
-            if inf['interval'] > 0:
-                time.sleep(inf['interval'])
-            continue
+            
+            #Split the image and comput flow for all image blocks
+            start_time = time.time_ns()
+            cmv_x, cmv_y = flowVectorSplit(sky_prev, sky_curr, inf)
+            u_mean,  v_mean = meanCMV(cmv_x, cmv_y)
+            end_time = time.time_ns()
+            inference_time = end_time-start_time
     
-        
-        #move one frame forward
-        sky_prev = sky_curr
-        sky_curr = sky_new
-        
-        #Split the image and comput flow for all image blocks
-        start_time = time.time_ns()
-        cmv_x, cmv_y = flowVectorSplit(sky_prev, sky_curr, inf)
-        u_mean,  v_mean = meanCMV(cmv_x, cmv_y)
-        end_time = time.time_ns()
-        inference_time = end_time-start_time
-
-        # Publish the output.
-        plugin.publish('atm.cmv.mean.u', u_mean)
-        plugin.publish('atm.cmv.mean.v', v_mean)
-        plugin.publish('atm.cmv.time', frame_time)
-        plugin.publish('plg.inf.time_ns', inference_time)
-	#plugin.upload_file()
-        
-        #Exit for one-shot
-        exit()
-        
-        if inf['interval'] > 0:
-            time.sleep(inf['interval'])
-        
+            # Publish the output.
+            plugin.publish('atm.cmv.mean.u', u_mean)
+            plugin.publish('atm.cmv.mean.v', v_mean)
+            plugin.publish('atm.cmv.time', frame_time)
+            plugin.publish('plg.inf.time_ns', inference_time)
+            #ugin.upload_file()
+            
+            oneshot = False
+            #if inf['interval'] > 0:
+            #    time.sleep(inf['interval'])
+            
 
 
 
