@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
 """
 Created on Mon Oct 25 11:05:11 2021
 
 The sky is divided into the kxk square blocks of block-size lxl pixels.
 """
-
 import argparse
 import sys
 import time
