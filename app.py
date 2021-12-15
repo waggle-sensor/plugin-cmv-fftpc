@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
 """
 Created on Mon Oct 25 11:05:11 2021
 
 The sky is divided into the kxk square blocks of block-size lxl pixels.
 """
-
 import argparse
 import sys
 import time
@@ -27,9 +27,7 @@ def main(args):
     #Create a dictionary to save settings
     inf = getInfoDict(args, NDist=1, error_thres=6, eps=0.2)
 
-    with Plugin() as plugin:    
-        camera = Camera(args.input)
-        
+    with Plugin() as plugin, Camera(args.input) as camera:
         #get video frame and crop info into the dictionary.
         inf = cropMarginInfo(camera, inf)
     
@@ -50,24 +48,20 @@ def main(args):
                 if inf['interval'] > 0:
                     time.sleep(inf['interval'])
                 continue
-        
-            
+
             #move one frame forward
             sky_prev = sky_curr
             sky_curr = sky_new
             
             #Split the image and comput flow for all image blocks
-            start_time = time.time_ns()
-            cmv_x, cmv_y = flowVectorSplit(sky_prev, sky_curr, inf)
-            u_mean,  v_mean = meanCMV(cmv_x, cmv_y)
-            end_time = time.time_ns()
-            inference_time = end_time-start_time
+            with plugin.timeit("plg.inf.time_ns"):
+                cmv_x, cmv_y = flowVectorSplit(sky_prev, sky_curr, inf)
+                u_mean, v_mean = meanCMV(cmv_x, cmv_y)
     
             # Publish the output.
             plugin.publish('atm.cmv.mean.u', u_mean)
             plugin.publish('atm.cmv.mean.v', v_mean)
             plugin.publish('atm.cmv.time', frame_time)
-            plugin.publish('plg.inf.time_ns', inference_time)
             #ugin.upload_file()
             
             oneshot = False
