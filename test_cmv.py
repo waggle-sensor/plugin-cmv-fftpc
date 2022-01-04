@@ -8,6 +8,12 @@ def cut(a, x, y, s):
     a[y:y+s, x:x+s] = 0
 
 
+def gen_box_with_hole(box_size, hole_x, hole_y, hole_size):
+    img = np.ones((box_size, box_size), dtype=float) 
+    cut(img, hole_x, hole_y, hole_size)
+    return img
+
+
 class TestCMV(unittest.TestCase):
 
     def test_fftFlowVector_ones(self):
@@ -18,11 +24,8 @@ class TestCMV(unittest.TestCase):
         deltas = np.arange(-10, 11)
 
         for dx, dy in product(deltas, deltas):
-            img1 = np.ones((40, 40), dtype=float)
-            img2 = np.ones((40, 40), dtype=float)
-
-            cut(img1, 20, 20, 10)
-            cut(img2, 20+dx, 20+dy, 10)
+            img1 = gen_box_with_hole(40, 20, 20, 10)
+            img2 = gen_box_with_hole(40, 20+dx, 20+dy, 10)
 
             v = fftFlowVector(img1, img2)
 
@@ -38,11 +41,8 @@ class TestCMV(unittest.TestCase):
         deltas = np.arange(-10, 11)
 
         for dx, dy in product(deltas, deltas):
-            img1 = np.ones((40, 40), dtype=float) + rand.uniform(0, 0.25, (40, 40))
-            img2 = np.ones((40, 40), dtype=float) + rand.uniform(0, 0.25, (40, 40))
-
-            cut(img1, 20, 20, 10)
-            cut(img2, 20+dx, 20+dy, 10)
+            img1 = gen_box_with_hole(40, 20, 20, 10) + rand.uniform(0, 0.25, (40, 40))
+            img2 = gen_box_with_hole(40, 20+dx, 20+dy, 10) + rand.uniform(0, 0.25, (40, 40))
 
             v = fftFlowVector(img1, img2)
 
