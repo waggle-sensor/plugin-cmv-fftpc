@@ -11,6 +11,10 @@ def cut(a, x, y, s):
 class TestCMV(unittest.TestCase):
 
     def test_fftFlowVector_ones(self):
+        """
+        test_fftFlowVector_ones checks that fftFlowVector detects the motion
+        of a cutout rectangle shifted by a known offset.
+        """
         deltas = np.arange(-10, 11)
 
         for dx, dy in product(deltas, deltas):
@@ -26,6 +30,10 @@ class TestCMV(unittest.TestCase):
             self.assertAlmostEqual(dy, v[0])
 
     def test_fftFlowVector_ones_noise(self):
+        """
+        test_fftFlowVector_ones_noise checks that fftFlowVector detects the motion
+        of a cutout rectangle shifted by a known offset with the addition of noise.
+        """
         rand = np.random.RandomState(1234)
         deltas = np.arange(-10, 11)
 
