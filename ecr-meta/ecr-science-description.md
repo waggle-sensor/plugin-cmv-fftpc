@@ -25,6 +25,24 @@ Model loading time: NA
 # Ontology
 The plugin will publish U and V components of the CMV (atm.cmv.mean.u, atm.cmv.mean.v) and time.
 
+# Inference from Sage codes
+To query the output from the plugin, you can do with python library 'sage_data_client':
+```
+import sage_data_client
+
+# query and load data into pandas data frame
+df = sage_data_client.query(
+    start="-1h",
+    filter={
+        "name": "cloud-motion",
+    }
+)
+
+# print results in data frame
+print(df)
+```
+For more information, please see [Access and use data documentation](https://docs.sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
+
 # References
 [1] J. A. Leese, C. S. Novak, and B. B. Clark, "An automated technique for obtaining cloud motion from geosynchronous satellite data using cross-correlation," J. Appl. Meteor., vol. 10, no. 1, pp. 118–132, 1971.  
 [2] J. Westerweel and F.Scarano, "Universal outlier detection for PIV data," Experiments in Fluids, vol. 39, no. 6, pp. 1096–1100, 2005. 
