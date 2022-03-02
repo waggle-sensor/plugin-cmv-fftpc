@@ -86,7 +86,7 @@ if __name__ == "__main__":
                         help='kxk image sectors used for CMV computation.',
                         default=10)
     parser.add_argument('--l', type=int,
-                        help='square block length, lxl in pixels.', default=40)
+                        help='square block length, lxl in pixels.', default=200)
     parser.add_argument('--c', type=int,
                         help='RGB channels, 0=R, 1=G, 2=B', default=0)
     
