@@ -34,7 +34,7 @@ import sage_data_client
 df = sage_data_client.query(
     start="-1h",
     filter={
-        "name": "cloud-motion",
+        "name": "atm.cmv.mean.u",
     }
 )
 
