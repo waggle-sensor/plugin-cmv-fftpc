@@ -27,6 +27,8 @@ def main(args):
     #Create a dictionary to save settings
     inf = getInfoDict(args, NDist=1, error_thres=6, eps=0.2)
 
+    
+
     with Plugin() as plugin, Camera(args.input) as camera:
         #get video frame and crop info into the dictionary.
         inf = cropMarginInfo(camera, inf)
@@ -85,8 +87,8 @@ if __name__ == "__main__":
     parser.add_argument('--k', type=int, 
                         help='kxk image sectors used for CMV computation.',
                         default=10)
-    parser.add_argument('--l', type=int,
-                        help='square block length, lxl in pixels.', default=200)
+    #parser.add_argument('--l', type=int,
+    #                    help='square block length, lxl in pixels.', default=200)
     parser.add_argument('--c', type=int,
                         help='RGB channels, 0=R, 1=G, 2=B', default=0)
     

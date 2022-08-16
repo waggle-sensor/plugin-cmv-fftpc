@@ -7,13 +7,14 @@ Created on Fri Oct  8 13:06:48 2021
 import sys
 import numpy as np
 
-def getInfoDict(args, NDist=1, error_thres=5, eps=0.2):
+
+def getInfoDict(args, NDist=1, error_thres=6, eps=0.2):
     """ Takes input args and save it in a dictionary.
     """
     inf = dict()
     inf['input'] = args.input
     inf['nblock'] = args.k
-    inf['block_len'] = args.l
+    #inf['block_len'] = args.l
     inf['interval'] = args.i
     inf['channel'] = args.c
     
@@ -39,11 +40,13 @@ def cropMarginInfo(camera, inf):
 def getCropMargin(inf):
     """ Computes crop area from the settings from 'inf' and appends it to the same dictionary. 
     """
-    crop_len = inf['block_len'] * inf['nblock']
-    small_dim = min([inf['frame_height'], inf['frame_width']])
+    small_dim_len = min(inf['frame_height'], inf['frame_width'])
+    inf['block_len'] = np.floor(small_dim_len/inf['nblock'])
     
-    if(crop_len >= small_dim):
-        exit("Error: The original frame size is smaller than \
+    crop_len = inf['block_len'] * inf['nblock']
+    
+    if(crop_len >= small_dim_len):
+        exit("Unexpected Error: The original frame size is smaller than \
              the provided crop-dimensions.")
              
     inf['cent_x'] = int(inf['frame_width']/2)
