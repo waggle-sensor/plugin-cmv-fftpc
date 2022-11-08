@@ -14,11 +14,10 @@ def getInfoDict(args, NDist=1, error_thres=6, eps=0.2):
     inf = dict()
     inf['input'] = args.input
     inf['nblock'] = args.k
-    #inf['block_len'] = args.l
     inf['interval'] = args.i
     inf['channel'] = args.c
     
-    inf['v_max']= int(np.ceil(inf['block_len']/3))
+    
     inf['WS05-neighborhood_dist'] = NDist
     inf['WS05-eps'] = eps
     inf['WS05-error_thres'] = error_thres
@@ -40,8 +39,10 @@ def cropMarginInfo(camera, inf):
 def getCropMargin(inf):
     """ Computes crop area from the settings from 'inf' and appends it to the same dictionary. 
     """
+    
     small_dim_len = min(inf['frame_height'], inf['frame_width'])
     inf['block_len'] = np.floor(small_dim_len/inf['nblock'])
+    inf['v_max']= int(np.ceil(inf['block_len']/3))
     
     crop_len = inf['block_len'] * inf['nblock']
     
