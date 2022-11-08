@@ -70,7 +70,7 @@ def main(args):
             print(frame_time)
             #ugin.upload_file()
             
-            oneshot = False
+            #oneshot = False
             #if inf['interval'] > 0:
             #    time.sleep(inf['interval'])
             
