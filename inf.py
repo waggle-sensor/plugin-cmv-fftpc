@@ -44,9 +44,11 @@ def getCropMargin(inf):
     inf['block_len'] = np.floor(small_dim_len/inf['nblock'])
     inf['v_max']= int(np.ceil(inf['block_len']/3))
     
-    crop_len = inf['block_len'] * inf['nblock']
+    inf['crop_len'] = inf['block_len'] * inf['nblock']
     
-    if(crop_len >= small_dim_len):
+    print(inf)
+    
+    if(inf['crop_len'] > small_dim_len):
         exit("Unexpected Error: The original frame size is smaller than \
              the provided crop-dimensions.")
              
@@ -54,13 +56,13 @@ def getCropMargin(inf):
     inf['cent_y'] = int(inf['frame_height']/2)
     
     #crop a square region of interest to accomodate 
-    inf['y1'] = int(inf['cent_y'] - crop_len/2)
-    inf['y2'] = int(inf['cent_y'] + crop_len/2)
-    inf['x1'] = int(inf['cent_x'] - crop_len/2)
-    inf['x2'] = int(inf['cent_x'] + crop_len/2)
+    inf['y1'] = int(inf['cent_y'] - inf['crop_len'] /2)
+    inf['y2'] = int(inf['cent_y'] + inf['crop_len'] /2)
+    inf['x1'] = int(inf['cent_x'] - inf['crop_len'] /2)
+    inf['x2'] = int(inf['cent_x'] + inf['crop_len'] /2)
     
     #compute approximate central points of each block
-    mid_loc = np.arange((inf['block_len']/2) - 1, crop_len, inf['block_len'])
+    mid_loc = np.arange((inf['block_len']/2) - 1, inf['crop_len'], inf['block_len'])
     inf['block_mid']= mid_loc.astype('int32')
     
     return inf

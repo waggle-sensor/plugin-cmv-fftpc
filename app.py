@@ -64,6 +64,10 @@ def main(args):
             plugin.publish('atm.cmv.mean.u', u_mean)
             plugin.publish('atm.cmv.mean.v', v_mean)
             plugin.publish('atm.cmv.time', frame_time)
+            
+            print(u_mean)
+            print(v_mean)
+            print(frame_time)
             #ugin.upload_file()
             
             oneshot = False
