@@ -46,7 +46,8 @@ For more information, please see [Access and use data documentation](https://doc
 # References
 [1] J. A. Leese, C. S. Novak, and B. B. Clark, "An automated technique for obtaining cloud motion from geosynchronous satellite data using cross-correlation," J. Appl. Meteor., vol. 10, no. 1, pp. 118–132, 1971.  
 [2] J. Westerweel and F.Scarano, "Universal outlier detection for PIV data," Experiments in Fluids, vol. 39, no. 6, pp. 1096–1100, 2005. 
-[3] B. A. Raut, S. Collis, N. Ferrier, S. Shahkarami, S. Park, P. Muradyan, R. Jackson, R. Sankaran, Y. Kim, J. Swantek, D. Dematties Reyes, W. Gerlach, N. Conrad, S. Shemyakin, and P. Beckman, "Evaluation of Phase Correlation Method for Estimating Cloud Motion from the Edge-enabled Sky Camera Images," In Preparation.
+[3] Raut, B. A., Collis, S., Ferrier, N., Muradyan, P., Sankaran, R., Jackson, R., ... & Beckman, P. "Phase correlation on the edge for estimating cloud motion". Atmospheric Measurement Techniques Discussions, 2022, 1-18.
+
 # Credits
 ecr-icon.jpg  Wheat Field with Cypresses, Vincent van Gogh (Dutch), 1889.  
 https://www.metmuseum.org/art/collection/search/436535  
