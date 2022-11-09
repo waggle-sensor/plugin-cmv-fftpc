@@ -6,4 +6,4 @@ COPY app.py cmv.py inf.py /app/
 COPY test-data/sgptsimovieS01.a1.20160726.000000.mpg /app/test-data/
 
 WORKDIR /app
-# ENTRYPOINT ["python3", "/app/app.py"]
+ENTRYPOINT ["python3", "/app/app.py"]
