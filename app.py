@@ -36,9 +36,9 @@ def main(args):
         #Counting frames and time-steps for netcdf output requirment. 
         fcount = 0
         first_frame = True
-        oneshot = True
+        run_on = True
         
-        while oneshot:
+        while run_on:
             sample = camera.snapshot()
             frame_time = sample.timestamp
             fcount, sky_new = cropFrame(sample, fcount, inf)
@@ -65,14 +65,14 @@ def main(args):
             plugin.publish('atm.cmv.mean.v', v_mean)
             plugin.publish('atm.cmv.time', frame_time)
             
-            print(u_mean)
-            print(v_mean)
-            print(frame_time)
-            #ugin.upload_file()
+            #print(cmv_x)
+            #print(cmv_y)
+            #print(frame_time)
+            #pugin.upload_file()
             
-            #oneshot = False
-            #if inf['interval'] > 0:
-            #    time.sleep(inf['interval'])
+            #run_on = False
+            if inf['interval'] > 0:
+                time.sleep(inf['interval'])
             
 
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
                         help='Time skip in seconds.', default=30)
     parser.add_argument('--k', type=int, 
                         help='kxk image sectors used for CMV computation.',
-                        default=10)
+                        default=20)
     #parser.add_argument('--l', type=int,
     #                    help='square block length, lxl in pixels.', default=200)
     parser.add_argument('--c', type=int,
