@@ -71,9 +71,10 @@ def main(args):
             #print(frame_time)
             #pugin.upload_file()
             
-            #run_on = False
-            if inf['interval'] > 0:
-                time.sleep(inf['interval'])
+            
+            run_on = False
+            #if inf['interval'] > 0:
+            #    time.sleep(inf['interval'])
             
 
 
