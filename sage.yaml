@@ -1,6 +1,6 @@
 name: "cloud-motion"
 description: "Cloud Motion Estimator for the Sky Camera"
-version: "0.22.11.9"
+version: "0.22.11.10"
 authors: "Bhupendra Raut <braut@anl.gov>"
 collaborators: "Dario Dematties Reyes, Joseph Swantek, Neal Conrad, Nicola Ferrier, Pete Beckman, Raj Sankaran, Robert Jackson, Scott Collis, Sean Shahkarami, Seongha Park, Sergey Shemyakin, Wolfgang Gerlach, Yongho Kim"
 funding: "NSF 1935984"
