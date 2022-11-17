@@ -41,7 +41,7 @@ df = sage_data_client.query(
 # print results in data frame
 print(df)
 ```
-For more information, please see [Access and use data documentation](https://docs.sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
+For more information, please see [Access and use data documentation](https://docs.waggle-edge.ai/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
 
 # References
 [1] J. A. Leese, C. S. Novak, and B. B. Clark, "An automated technique for obtaining cloud motion from geosynchronous satellite data using cross-correlation," J. Appl. Meteor., vol. 10, no. 1, pp. 118–132, 1971.  
