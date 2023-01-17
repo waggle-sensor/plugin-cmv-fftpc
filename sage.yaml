@@ -1,5 +1,6 @@
 name: "cloud-motion"
-description: "Cloud Motion Estimator for the Sky Camera"
+namespace: "waggle"
+description: "Cloud Motion Estimator (PC) for the Sky Camera"
 version: "0.22.11.10"
 authors: "Bhupendra Raut <braut@anl.gov>"
 collaborators: "Dario Dematties Reyes, Joseph Swantek, Neal Conrad, Nicola Ferrier, Pete Beckman, Raj Sankaran, Robert Jackson, Scott Collis, Sean Shahkarami, Seongha Park, Sergey Shemyakin, Wolfgang Gerlach, Yongho Kim"
@@ -13,3 +14,15 @@ source:
     - "linux/arm64"
   url: "https://github.com/waggle-sensor/plugin-cmv-fftpc" 
   branch: "main"
+
+inputs:
+- id: "input"
+  type: "string"
+- id: "i"
+  type: "int"
+- id: "k"
+  type: "int"
+- id: "c"
+  type: "int"
+metadata:
+  ontology: atm.cmv.*
