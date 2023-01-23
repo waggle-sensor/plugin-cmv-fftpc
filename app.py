@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """
-Created on Mon Oct 25 11:05:11 2021
+Created on Mon Nov 21 11:05:11 2022
 
-The sky is divided into the kxk square blocks of block-size lxl pixels.
+Dense optical flow vectors are computed using OpenCV calcOpticalFlowFarneback method.
+The method returns an array of 2-channel floating-point images that has the same size as 
+imput images, and each pixel of the output array stores the computed optical flow for the 
+corresponding pixel of the input images. The optical flow is represented as a 2D vector,
+where the x and y components of the vector represent the flow along the x and y axis, 
+respectively.
 """
+
 import argparse
 import sys
 import time
@@ -11,21 +17,28 @@ import time
 from waggle.plugin import Plugin
 from waggle.data.vision import Camera
 
+import numpy as np
+from scipy import stats as st
+from inf import getInfoDict, cropMarginInfo, cropFrame, vectorMagnitudeDirection, getDivCurl
+import cv2
 
-from inf import getInfoDict, cropMarginInfo, cropFrame
-from cmv import flowVectorSplit, meanCMV
 
-#For debugging
+
+###For debugging
 #import matplotlib.pyplot as plt
 #import matplotlib.animation as animation
 
+#txt_file = '/Users/bhupendra/Desktop/oftest_flip.txt'
+
+#outfile = open(txt_file, "a")
+#outfile.writelines('magnitude\tdirection\n')
 
 def main(args):
     """ Takes in input args and run the whole CMV workflow.
     """
     
     #Create a dictionary to save settings
-    inf = getInfoDict(args, NDist=1, error_thres=6, eps=0.2)
+    inf = getInfoDict(args)
 
     
 
@@ -35,45 +48,67 @@ def main(args):
     
         #Counting frames and time-steps for netcdf output requirment. 
         fcount = 0
-        first_frame = True
-        oneshot = True
         
-        while oneshot:
+        sample = camera.snapshot()
+        frame_time = sample.timestamp
+        fcount, sky_curr = cropFrame(sample, fcount, inf)
+
+        run_on = True
+
+        while run_on:
+            if inf['interval'] > 0:
+                time.sleep(inf['interval'])        
+            #read new frame
             sample = camera.snapshot()
             frame_time = sample.timestamp
             fcount, sky_new = cropFrame(sample, fcount, inf)
-    
-            #Store the sky data for first the frame and and wait for the next frame.
-            if first_frame:
-                sky_curr = sky_new
-                first_frame = False
-                if inf['interval'] > 0:
-                    time.sleep(inf['interval'])
-                continue
-
-            #move one frame forward
+            
             sky_prev = sky_curr
             sky_curr = sky_new
-            
-            #Split the image and comput flow for all image blocks
+           
+            #comput optical flow 
             with plugin.timeit("plg.inf.time_ns"):
-                cmv_x, cmv_y = flowVectorSplit(sky_prev, sky_curr, inf)
-                u_mean, v_mean = meanCMV(cmv_x, cmv_y)
+                flow = cv2.calcOpticalFlowFarneback(sky_prev, sky_curr, None, 
+                                                    pyr_scale=0.5, levels=3, 
+                                                    winsize=inf['winsize'], 
+                                                    iterations=3, poly_n=inf['poly_n'], 
+                                                    poly_sigma=inf['poly_s'], flags=0)
+                # Computes the magnitude and angle of the 2D vectors
+                flow= np.round(flow, decimals=0)
+
+                flow_u = np.ma.masked_equal(flow[..., 0], 0)
+                flow_v = np.ma.masked_equal(flow[..., 1], 0)
+                flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
+                flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
+                #magnitude, direction = cv2.cartToPolar(flow_u.mean(), flow_v.mean(), angleInDegrees=True)
+                mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
+                                                            flow_v.mean())
+                mag_mode, dir_mode = vectorMagnitudeDirection(st.mode(flow_u),
+                                                            st.mode(flow_v))
+                mag_median, dir_median = vectorMagnitudeDirection(np.median(flow_u),
+                                                            np.median(flow_v))
+                div, curl = getDivCurl(flow)
+
+                div = np.round(div.mean(), 2)
+                curl = np.round(curl.mean(), 2)
+
     
-            # Publish the output.
-            plugin.publish('atm.cmv.mean.u', u_mean)
-            plugin.publish('atm.cmv.mean.v', v_mean)
-            plugin.publish('atm.cmv.time', frame_time)
+            # Publish the output.an()
+            plugin.publish('cmv.mean.vel', float(mag_mean))
+            plugin.publish('cmv.mean.dir', float(dir_mean))
+            plugin.publish('cmv.mode.vel', float(mag_mode))
+            plugin.publish('cmv.mode.dir', float(dir_mode))
+            plugin.publish('cmv.median.vel', float(mag_median))
+            plugin.publish('cmv.median.dir', float(dir_median))
+
+            #cv2.imwrite('/Users/bhupendra/image.jpg', sky_curr)
+            #plugin.upload_file('/Users/bhupendra/image.jpg', meta={})
+            #outfile.writelines(str(magnitude)+'\t'+str(direction)+'\n')
             
-            print(u_mean)
-            print(v_mean)
-            print(frame_time)
-            #ugin.upload_file()
+
+            #run_on = False
             
-            #oneshot = False
-            #if inf['interval'] > 0:
-            #    time.sleep(inf['interval'])
-            
+#outfile.close()
 
 
 
@@ -87,24 +122,18 @@ if __name__ == "__main__":
                         default="file://test-data/sgptsimovieS01.a1.20160726.000000.mpg")
 #                        default="/app/test-data/sgptsimovieS01.a1.20160726.000000.mpg")   
     parser.add_argument('--i', type=int, 
-                        help='Time skip in seconds.', default=30)
-    parser.add_argument('--k', type=int, 
-                        help='kxk image sectors used for CMV computation.',
-                        default=10)
-    #parser.add_argument('--l', type=int,
-    #                    help='square block length, lxl in pixels.', default=200)
+                        help='Time interval in seconds.', default=30)
     parser.add_argument('--c', type=int,
-                        help='RGB channels, 0=R, 1=G, 2=B', default=0)
+                        help='channels, 0=R, 1=G, 2=B, 9=Gr', default=0)
+    parser.add_argument('--k', type=float,
+                        help='Keep fraction of the image after cropping', default=0.9)
+    parser.add_argument('--q', type=int, 
+                        help='''Quality of the motion field.
+                        Sets averaging window, poly_n and poly_sigma.
+                        1-turbulant: detailed motion field but noisy.
+                        2-smooth: lesser noise and fast computation,''',
+                        default=1)
+
     
     args = parser.parse_args()
     main(args)
-
-
-
-
-
-
-
-
-
-

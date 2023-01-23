@@ -1,15 +1,30 @@
 name: "cloud-motion"
-description: "Cloud Motion Estimator for the Sky Camera"
-version: "0.22.2.27"
+namespace: "waggle"
+description: "Cloud Motion Estimator (Optical Flow) for the Sky Camera"
+version: "1.23.01.17"
 authors: "Bhupendra Raut <braut@anl.gov>"
 collaborators: "Dario Dematties Reyes, Joseph Swantek, Neal Conrad, Nicola Ferrier, Pete Beckman, Raj Sankaran, Robert Jackson, Scott Collis, Sean Shahkarami, Seongha Park, Sergey Shemyakin, Wolfgang Gerlach, Yongho Kim"
 funding: "NSF 1935984"
-license: "MIT license"
-keywords: "FFT, phase correlation, hemispheric sky imager"
-homepage: "https://github.com/waggle-sensor/plugin-cmv-fftpc"
+license: "GPL-3.0 license"
+keywords: "Optical Flow, Farnback, hemispheric sky imager"
+homepage: "https://github.com/waggle-sensor/plugin-cmv-optflow"
 source:
   architectures:
     - "linux/amd64"
     - "linux/arm64"
   url: "https://github.com/waggle-sensor/plugin-cmv-fftpc" 
   branch: "main"
+
+inputs:
+- id: "input"
+  type: "string"
+- id: "i"
+  type: "int"
+- id: "c"
+  type: "int"
+- id: "k"
+  type: "float"
+- id: "q"
+  type: "int"
+metadata:
+  ontology: cmv.*
