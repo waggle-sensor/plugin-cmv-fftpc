@@ -49,15 +49,9 @@ print(df)
 For more information, please see [Access and use data documentation](https://docs.sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
 
 # References
-<<<<<<< HEAD
-[1] J. A. Leese, C. S. Novak, and B. B. Clark, "An automated technique for obtaining cloud motion from geosynchronous satellite data using cross-correlation," J. Appl. Meteor., vol. 10, no. 1, pp. 118–132, 1971.  
-[2] J. Westerweel and F.Scarano, "Universal outlier detection for PIV data," Experiments in Fluids, vol. 39, no. 6, pp. 1096–1100, 2005. 
-[3] Raut, B. A., Collis, S., Ferrier, N., Muradyan, P., Sankaran, R., Jackson, R., ... & Beckman, P. "Phase correlation on the edge for estimating cloud motion". Atmospheric Measurement Techniques Discussions, 2022, 1-18.
-=======
 [1] Raut, B. A., Collis, S., Ferrier, N., Muradyan, P., Sankaran, R., Jackson, R., ... & Beckman, P. "Phase correlation on the edge for estimating cloud motion". Atmospheric Measurement Techniques Discussions, 2022, 1-18.
 
 [2] Farnebäck, Gunnar. "Two-frame motion estimation based on polynomial expansion." _Scandinavian conference on Image analysis_. Springer, Berlin, Heidelberg, 2003.
->>>>>>> devel
 
 # Credits
 ecr-icon.jpg  Wheat Field with Cypresses, Vincent van Gogh (Dutch), 1889.  
