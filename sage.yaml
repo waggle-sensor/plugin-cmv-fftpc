@@ -1,12 +1,7 @@
 name: "cloud-motion"
 namespace: "waggle"
-<<<<<<< HEAD
-description: "Cloud Motion Estimator (PC) for the Sky Camera"
-version: "0.22.11.11"
-=======
 description: "Cloud Motion Estimator (Optical Flow) for the Sky Camera"
 version: "1.23.01.17"
->>>>>>> devel
 authors: "Bhupendra Raut <braut@anl.gov>"
 collaborators: "Dario Dematties Reyes, Joseph Swantek, Neal Conrad, Nicola Ferrier, Pete Beckman, Raj Sankaran, Robert Jackson, Scott Collis, Sean Shahkarami, Seongha Park, Sergey Shemyakin, Wolfgang Gerlach, Yongho Kim"
 funding: "NSF 1935984"
@@ -25,14 +20,6 @@ inputs:
   type: "string"
 - id: "i"
   type: "int"
-<<<<<<< HEAD
-- id: "k"
-  type: "int"
-- id: "c"
-  type: "int"
-metadata:
-  ontology: atm.cmv.*
-=======
 - id: "c"
   type: "int"
 - id: "k"
@@ -41,4 +28,3 @@ metadata:
   type: "int"
 metadata:
   ontology: cmv.*
->>>>>>> devel
