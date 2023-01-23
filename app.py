@@ -48,12 +48,6 @@ def main(args):
     
         #Counting frames and time-steps for netcdf output requirment. 
         fcount = 0
-<<<<<<< HEAD
-        first_frame = True
-        run_on = True
-        
-        while run_on:
-=======
         
         sample = camera.snapshot()
         frame_time = sample.timestamp
@@ -65,7 +59,6 @@ def main(args):
             if inf['interval'] > 0:
                 time.sleep(inf['interval'])        
             #read new frame
->>>>>>> devel
             sample = camera.snapshot()
             frame_time = sample.timestamp
             fcount, sky_new = cropFrame(sample, fcount, inf)
@@ -112,20 +105,8 @@ def main(args):
             #plugin.upload_file('/Users/bhupendra/image.jpg', meta={})
             #outfile.writelines(str(magnitude)+'\t'+str(direction)+'\n')
             
-<<<<<<< HEAD
-            #print(cmv_x)
-            #print(cmv_y)
-            #print(frame_time)
-            #pugin.upload_file()
-            
-            
-            run_on = False
-            #if inf['interval'] > 0:
-            #    time.sleep(inf['interval'])
-=======
 
             #run_on = False
->>>>>>> devel
             
 #outfile.close()
 
@@ -141,16 +122,7 @@ if __name__ == "__main__":
                         default="file://test-data/sgptsimovieS01.a1.20160726.000000.mpg")
 #                        default="/app/test-data/sgptsimovieS01.a1.20160726.000000.mpg")   
     parser.add_argument('--i', type=int, 
-<<<<<<< HEAD
-                        help='Time skip in seconds.', default=30)
-    parser.add_argument('--k', type=int, 
-                        help='kxk image sectors used for CMV computation.',
-                        default=20)
-    #parser.add_argument('--l', type=int,
-    #                    help='square block length, lxl in pixels.', default=200)
-=======
                         help='Time interval in seconds.', default=30)
->>>>>>> devel
     parser.add_argument('--c', type=int,
                         help='channels, 0=R, 1=G, 2=B, 9=Gr', default=0)
     parser.add_argument('--k', type=float,
