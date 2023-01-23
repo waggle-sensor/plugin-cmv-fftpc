@@ -51,16 +51,9 @@ def getInfoDict(args):
     inf['input'] = args.input
     inf['interval'] = args.i
     inf['channel'] = args.c
-<<<<<<< HEAD
-    
-    inf['WS05-neighborhood_dist'] = NDist
-    inf['WS05-eps'] = eps
-    inf['WS05-error_thres'] = error_thres
-=======
     inf['keep_frac'] = args.k
     inf['quality'] = args.q #resets to computed values if zero
     inf = set_quality(inf)
->>>>>>> devel
     return inf
 
 
@@ -100,12 +93,6 @@ def getCropMargin(inf):
     """
     
     small_dim_len = min(inf['frame_height'], inf['frame_width'])
-<<<<<<< HEAD
-    inf['block_len'] = np.floor(small_dim_len/inf['nblock'])
-    inf['v_max']= int(np.ceil(inf['block_len']/3))
-    inf['error_thres']= inf['block_len'] /5
-=======
->>>>>>> devel
     
     inf['crop_len'] = small_dim_len *  inf['keep_frac']
     
