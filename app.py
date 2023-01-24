@@ -18,7 +18,7 @@ from waggle.plugin import Plugin
 from waggle.data.vision import Camera
 
 import numpy as np
-from scipy import stats as st
+#from scipy import stats as st
 from inf import getInfoDict, cropMarginInfo, cropFrame, vectorMagnitudeDirection, getDivCurl
 import cv2
 
@@ -83,7 +83,7 @@ def main(args):
                 #magnitude, direction = cv2.cartToPolar(flow_u.mean(), flow_v.mean(), angleInDegrees=True)
                 mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
                                                             flow_v.mean())
-                mag_mode, dir_mode = vectorMagnitudeDirection(st.mode(flow_u),
+#                mag_mode, dir_mode = vectorMagnitudeDirection(st.mode(flow_u),
                                                             st.mode(flow_v))
                 mag_median, dir_median = vectorMagnitudeDirection(np.median(flow_u),
                                                             np.median(flow_v))
@@ -96,8 +96,8 @@ def main(args):
             # Publish the output.an()
             plugin.publish('cmv.mean.vel', float(mag_mean))
             plugin.publish('cmv.mean.dir', float(dir_mean))
-            plugin.publish('cmv.mode.vel', float(mag_mode))
-            plugin.publish('cmv.mode.dir', float(dir_mode))
+#            plugin.publish('cmv.mode.vel', float(mag_mode))
+#            plugin.publish('cmv.mode.dir', float(dir_mode))
             plugin.publish('cmv.median.vel', float(mag_median))
             plugin.publish('cmv.median.dir', float(dir_median))
 

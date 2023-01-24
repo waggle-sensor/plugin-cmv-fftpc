@@ -1,3 +1,2 @@
 waggle[vision] @ https://github.com/waggle-sensor/pywaggle/releases/download/0.51.0/waggle-0.51.0-py3-none-any.whl
 opencv-python
-scipy
