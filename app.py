@@ -80,26 +80,29 @@ def main(args):
                 flow_v = np.ma.masked_equal(flow[..., 1], 0)
                 flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
                 flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
-                #magnitude, direction = cv2.cartToPolar(flow_u.mean(), flow_v.mean(), angleInDegrees=True)
+                #magnitude, direction = cv2.cartToPolar(flow_u.mean(), 
+                # flow_v.mean(), angleInDegrees=True)
                 mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
                                                             flow_v.mean())
-#                mag_mode, dir_mode = vectorMagnitudeDirection(st.mode(flow_u),
-                                                            st.mode(flow_v))
-                mag_median, dir_median = vectorMagnitudeDirection(np.median(flow_u),
-                                                            np.median(flow_v))
-                div, curl = getDivCurl(flow)
+                #mag_mode, dir_mode = vectorMagnitudeDirection(st.mode(flow_u),
+                                                            #st.mode(flow_v))
+                #mag_median, dir_median = vectorMagnitudeDirection(np.median(flow_u),
+                                                            #np.median(flow_v))
+                #div, curl = getDivCurl(flow)
 
-                div = np.round(div.mean(), 2)
-                curl = np.round(curl.mean(), 2)
+                #div = np.round(div.mean(), 2)
+                #curl = np.round(curl.mean(), 2)
 
     
             # Publish the output.an()
             plugin.publish('cmv.mean.vel', float(mag_mean))
             plugin.publish('cmv.mean.dir', float(dir_mean))
-#            plugin.publish('cmv.mode.vel', float(mag_mode))
-#            plugin.publish('cmv.mode.dir', float(dir_mode))
-            plugin.publish('cmv.median.vel', float(mag_median))
-            plugin.publish('cmv.median.dir', float(dir_median))
+            #plugin.publish('cmv.mode.vel', float(mag_mode))
+            #plugin.publish('cmv.mode.dir', float(dir_mode))
+            #plugin.publish('cmv.median.vel', float(mag_median))
+            #plugin.publish('cmv.median.dir', float(dir_median))
+            #print(div)
+            print(mag_mean)
 
             #cv2.imwrite('/Users/bhupendra/image.jpg', sky_curr)
             #plugin.upload_file('/Users/bhupendra/image.jpg', meta={})
