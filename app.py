@@ -13,6 +13,7 @@ respectively.
 import argparse
 import sys
 import time
+import os
 
 from waggle.plugin import Plugin
 from waggle.data.vision import Camera
@@ -90,8 +91,14 @@ def main(args):
             plugin.publish('cmv.mean.vel.pixpmin', float(mag_mean_minute))
             plugin.publish('cmv.mean.dir.degrees', float(dir_mean))
 
-            #cv2.imwrite('/Users/bhupendra/image.jpg', sky_curr)
-            #plugin.upload_file('/Users/bhupendra/image.jpg', meta={})
+           # cv2.imwrite('image.jpg', sky_curr)
+           # plugin.upload_file('image.jpg', meta={})
+    
+            
+            #try:
+            #    os.remove("my.png")
+            #except: pass
+
             
 
             #run_on = False
