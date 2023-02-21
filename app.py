@@ -80,34 +80,18 @@ def main(args):
                 flow_v = np.ma.masked_equal(flow[..., 1], 0)
                 flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
                 flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
-                #magnitude, direction = cv2.cartToPolar(flow_u.mean(), 
-                # flow_v.mean(), angleInDegrees=True)
                 mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
                                                             flow_v.mean())
                 mag_mean_minute = mag_mean * vel_factor 
-                #mag_mode, dir_mode = vectorMagnitudeDirection(st.mode(flow_u),
-                                                            #st.mode(flow_v))
-                #mag_median, dir_median = vectorMagnitudeDirection(np.median(flow_u),
-                                                            #np.median(flow_v))
-                #div, curl = getDivCurl(flow)
 
-                #div = np.round(div.mean(), 2)
-                #curl = np.round(curl.mean(), 2)
 
     
-            # Publish the output.an()
+            # Publish the output
             plugin.publish('cmv.mean.vel.pixpmin', float(mag_mean_minute))
             plugin.publish('cmv.mean.dir.degrees', float(dir_mean))
-            #plugin.publish('cmv.mode.vel', float(mag_mode))
-            #plugin.publish('cmv.mode.dir', float(dir_mode))
-            #plugin.publish('cmv.median.vel', float(mag_median))
-            #plugin.publish('cmv.median.dir', float(dir_median))
-            #print(div)
-            print(mag_mean)
 
             #cv2.imwrite('/Users/bhupendra/image.jpg', sky_curr)
             #plugin.upload_file('/Users/bhupendra/image.jpg', meta={})
-            #outfile.writelines(str(magnitude)+'\t'+str(direction)+'\n')
             
 
             #run_on = False
@@ -118,8 +102,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''
-                                     This program uses phase correlation method 
-                                     from the TINT module to compute the cloud 
+                                     This program uses optical flow method 
+                                     from CV2 to compute the cloud 
                                      motion vectors in the hemispheric camera''')
     parser.add_argument('--input', type=str, 
                         help='Path to an input video or images.', 
