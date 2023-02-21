@@ -28,5 +28,5 @@ inputs:
   type: "int"
 metadata:
   ontology: 
-  cmv.mean.vel.pixpmin
-  cmv.mean.dir.degrees
+  - cmv.mean.vel.pixpmin
+  - cmv.mean.dir.degrees
