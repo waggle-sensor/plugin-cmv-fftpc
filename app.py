@@ -40,7 +40,7 @@ def main(args):
     #Create a dictionary to save settings
     inf = getInfoDict(args)
 
-    
+    vel_factor = 60/inf['interval']
 
     with Plugin() as plugin, Camera(args.input) as camera:
         #get video frame and crop info into the dictionary.
@@ -84,6 +84,7 @@ def main(args):
                 # flow_v.mean(), angleInDegrees=True)
                 mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
                                                             flow_v.mean())
+                mag_mean_minute = mag_mean * vel_factor 
                 #mag_mode, dir_mode = vectorMagnitudeDirection(st.mode(flow_u),
                                                             #st.mode(flow_v))
                 #mag_median, dir_median = vectorMagnitudeDirection(np.median(flow_u),
@@ -95,8 +96,8 @@ def main(args):
 
     
             # Publish the output.an()
-            plugin.publish('cmv.mean.vel', float(mag_mean))
-            plugin.publish('cmv.mean.dir', float(dir_mean))
+            plugin.publish('cmv.mean.vel.pixpmin', float(mag_mean_minute))
+            plugin.publish('cmv.mean.dir.degrees', float(dir_mean))
             #plugin.publish('cmv.mode.vel', float(mag_mode))
             #plugin.publish('cmv.mode.dir', float(dir_mode))
             #plugin.publish('cmv.median.vel', float(mag_median))
