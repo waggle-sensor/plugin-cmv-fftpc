@@ -90,15 +90,25 @@ def main(args):
             # Publish the output
             plugin.publish('cmv.mean.vel.pixpmin', float(mag_mean_minute))
             plugin.publish('cmv.mean.dir.degrees', float(dir_mean))
-
-           # cv2.imwrite('image.jpg', sky_curr)
-           # plugin.upload_file('image.jpg', meta={})
-    
             
-            #try:
-            #    os.remove("my.png")
-            #except: pass
 
+            # when it crosses first high CMV values threshold upload image
+            if mag_mean_minute > 25:
+                img1_file_name = 'img1_'+str(frame_time)+'.jpg'
+                cv2.imwrite(img1_file_name, sky_prev)
+                plugin.upload_file(img1_file_name, meta={})
+                try:
+                    os.remove(img1_file_name)
+                except: pass
+
+            # If it crossed the second threshold, upload both images
+            if mag_mean_minute > 50:
+                img2_file_name = 'img2_'+str(frame_time)+'.jpg'
+                cv2.imwrite(img2_file_name, sky_curr)
+                plugin.upload_file(img2_file_name, meta={})
+                try:
+                    os.remove(img2_file_name)
+                except: pass
             
 
             #run_on = False
