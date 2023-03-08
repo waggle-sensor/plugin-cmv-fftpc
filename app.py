@@ -14,6 +14,7 @@ import argparse
 import sys
 import time
 import os
+import logging
 
 from waggle.plugin import Plugin
 from waggle.data.vision import Camera
@@ -50,7 +51,11 @@ def main(args):
         #Counting frames and time-steps for netcdf output requirment. 
         fcount = 0
         
-        sample = camera.snapshot()
+        try:
+            sample = camera.snapshot()
+        except Exception as e:
+            logging.error(f"First run-time error in camera.snapshot: {e}")
+            sys.exit(-1)
         frame_time = sample.timestamp
         fcount, sky_curr = cropFrame(sample, fcount, inf)
 
@@ -60,7 +65,11 @@ def main(args):
             if inf['interval'] > 0:
                 time.sleep(inf['interval'])        
             #read new frame
-            sample = camera.snapshot()
+            try:
+                sample = camera.snapshot()
+            except Exception as e:
+                logging.error(f"Second run-time error in camera.snapshot: {e}")
+                sys.exit(-1)
             frame_time = sample.timestamp
             fcount, sky_new = cropFrame(sample, fcount, inf)
             
