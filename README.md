@@ -27,7 +27,7 @@ The plugin has several arguments that can be set by the user:
     '--c': RGB channels, 0=R, 1=G, 2=B (Default 0 i.e. Red).
     '--k': Keep fraction of the image after cropping (Default=0.9).
     '--q': Quality of the motion field (Default 1). Sets averaging window, poly_n and poly_sigma. 1-turbulant: detailed motion field but noisy. 2-smooth: lesser noise and fast computation.
-
+    '--thr': Upload the images if magnitude crosses this value (Default=10).
 ## Ontology
 
 The plugin will publish mean direction and and mean velocity of the cloud motion (cmv.mean.dir, cmv.mean.vel). The plugin will also publish images when the mean cloud speed is higher than a threshold.
