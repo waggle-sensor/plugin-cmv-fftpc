@@ -28,7 +28,6 @@ inputs:
   type: "int"
 - id: "thr"
   type: "int"
-- id: "oneshot"
 
 metadata:
   ontology: 

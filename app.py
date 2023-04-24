@@ -148,9 +148,8 @@ if __name__ == "__main__":
     parser.add_argument('--thr', type=int, 
                         help='''Uploads images when magnitude is above this threshold''',
                         default=10)
-    
     parser.add_argument('--oneshot', action= 'store_true',
-                    help='''Run once and exit.''')
+                    help='''Run once and exit.''') #This is not working as intended.
 
     
     args = parser.parse_args()
