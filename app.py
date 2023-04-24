@@ -117,7 +117,7 @@ def main(args):
                     os.remove(img1_file_name)
                 except: pass
                 
-            if args.oneshot=='yes':
+            if args.oneshot:
                 run_on = False
             
 
