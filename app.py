@@ -88,21 +88,23 @@ def main(args):
             # Computes the magnitude and angle of the 2D vectors
             flow= np.round(flow, decimals=0)
 
-            flow_u = np.ma.masked_equal(flow[..., 0], 0)
-            flow_v = np.ma.masked_equal(flow[..., 1], 0)
-            flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
-            flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
-            mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
-                                                        flow_v.mean())
-            mag_mean_minute = mag_mean * vel_factor 
-
+            #flow_u = np.ma.masked_equal(flow[..., 0], 0)
+            #flow_v = np.ma.masked_equal(flow[..., 1], 0)
+            #flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
+            #flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
+            #mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
+                                                        #flow_v.mean())
+            
+            mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+            mag_mean_minute = mag.mean() * vel_factor 
+            dir_mean = ang.mean() 
 
     
             # Publish the output
             plugin.publish('cmv.mean.vel.pixpmin', float(mag_mean_minute), timestamp=frame_time)
             plugin.publish('cmv.mean.dir.degrees', float(dir_mean), timestamp=frame_time)
-            plugin.publish('cmv.mean.u.debug', float(flow_u.mean()))
-            plugin.publish('cmv.mean.v.debug', float(flow_v.mean()))
+            #plugin.publish('cmv.mean.u.debug', float(flow_u.mean()))
+            #plugin.publish('cmv.mean.v.debug', float(flow_v.mean()))
             
 
 
@@ -119,8 +121,8 @@ def main(args):
                     os.remove(img1_file_name)
                 except: pass
                 
-            if args.oneshot:
-                run_on = False
+            #if args.oneshot:
+            run_on = False
             
 
 
@@ -136,7 +138,7 @@ if __name__ == "__main__":
                         default="file://test-data/sgptsimovieS01.a1.20160726.000000.mpg")
 #                        default="/app/test-data/sgptsimovieS01.a1.20160726.000000.mpg")   
     parser.add_argument('--i', type=int, 
-                        help='Time interval in seconds.', default=30)
+                        help='Time interval in seconds.', default=60)
     parser.add_argument('--c', type=int,
                         help='channels, 0=R, 1=G, 2=B, 9=Gr', default=0)
     parser.add_argument('--k', type=float,
