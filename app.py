@@ -101,6 +101,8 @@ def main(args):
             # Publish the output
             plugin.publish('cmv.mean.vel.pixpmin', float(mag_mean_minute), timestamp=frame_time)
             plugin.publish('cmv.mean.dir.degrees', float(dir_mean), timestamp=frame_time)
+            plugin.publish('cmv.mean.u.debug', float(flow_u.mean()))
+            plugin.publish('cmv.mean.v.debug', float(flow_v.mean()))
             
 
 
