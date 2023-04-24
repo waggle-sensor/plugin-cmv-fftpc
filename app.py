@@ -117,7 +117,7 @@ def main(args):
                     os.remove(img1_file_name)
                 except: pass
                 
-            if args.oneshot:
+            if args.oneshot=='yes':
                 run_on = False
             
 
@@ -149,9 +149,8 @@ if __name__ == "__main__":
                         help='''Uploads images when magnitude is above this threshold''',
                         default=10)
     
-    parser.add_argument('--oneshot', type=bool, 
-                    help='''Run once and exit.''',
-                    default=True)
+    parser.add_argument('--oneshot', action= 'store_true',
+                    help='''Run once and exit.''')
 
     
     args = parser.parse_args()
