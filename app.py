@@ -79,22 +79,22 @@ def main(args):
             sky_curr = sky_new
            
             #comput optical flow 
-            with plugin.timeit("plg.inf.time_ns"):
-                flow = cv2.calcOpticalFlowFarneback(sky_prev, sky_curr, None, 
-                                                    pyr_scale=0.5, levels=3, 
-                                                    winsize=inf['winsize'], 
-                                                    iterations=3, poly_n=inf['poly_n'], 
-                                                    poly_sigma=inf['poly_s'], flags=0)
-                # Computes the magnitude and angle of the 2D vectors
-                flow= np.round(flow, decimals=0)
+#            with plugin.timeit("plg.inf.time_ns"):
+            flow = cv2.calcOpticalFlowFarneback(sky_prev, sky_curr, None, 
+                                                pyr_scale=0.5, levels=3, 
+                                                winsize=inf['winsize'], 
+                                                iterations=3, poly_n=inf['poly_n'], 
+                                                poly_sigma=inf['poly_s'], flags=0)
+            # Computes the magnitude and angle of the 2D vectors
+            flow= np.round(flow, decimals=0)
 
-                flow_u = np.ma.masked_equal(flow[..., 0], 0)
-                flow_v = np.ma.masked_equal(flow[..., 1], 0)
-                flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
-                flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
-                mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
-                                                            flow_v.mean())
-                mag_mean_minute = mag_mean * vel_factor 
+            flow_u = np.ma.masked_equal(flow[..., 0], 0)
+            flow_v = np.ma.masked_equal(flow[..., 1], 0)
+            flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
+            flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
+            mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
+                                                        flow_v.mean())
+            mag_mean_minute = mag_mean * vel_factor 
 
 
     
