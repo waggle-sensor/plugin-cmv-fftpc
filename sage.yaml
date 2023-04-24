@@ -29,7 +29,6 @@ inputs:
 - id: "thr"
   type: "int"
 - id: "oneshot"
-  type: "bool"
 
 metadata:
   ontology: 
