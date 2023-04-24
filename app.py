@@ -21,7 +21,7 @@ from waggle.data.vision import Camera
 
 import numpy as np
 #from scipy import stats as st
-from inf import getInfoDict, cropMarginInfo, cropFrame, vectorMagnitudeDirection, getDivCurl
+from inf import getInfoDict, cropMarginInfo, cropFrame, vectorMagnitudeDirection
 import cv2
 
 
@@ -54,7 +54,8 @@ def main(args):
         try:
             sample = camera.snapshot()
         except Exception as e:
-            logging.error(f"First run-time error in camera.snapshot: {e}")
+            logging.error(f"Run-time error in First camera.snapshot: {e}")
+            plugin.publish('exit.error', e)
             sys.exit(-1)
         frame_time = sample.timestamp
         fcount, sky_curr = cropFrame(sample, fcount, inf)
@@ -68,7 +69,8 @@ def main(args):
             try:
                 sample = camera.snapshot()
             except Exception as e:
-                logging.error(f"Second run-time error in camera.snapshot: {e}")
+                logging.error(f"Run-time error in Second camera.snapshot: {e}")
+                plugin.publish('exit.error', e)
                 sys.exit(-1)
             frame_time = sample.timestamp
             fcount, sky_new = cropFrame(sample, fcount, inf)
@@ -115,8 +117,8 @@ def main(args):
                     os.remove(img1_file_name)
                 except: pass
                 
-                
-            #run_on = False
+            if args.oneshot:
+                run_on = False
             
 
 
@@ -146,6 +148,10 @@ if __name__ == "__main__":
     parser.add_argument('--thr', type=int, 
                         help='''Uploads images when magnitude is above this threshold''',
                         default=10)
+    
+    parser.add_argument('--oneshot', type=bool, 
+                    help='''Run once and exit.''',
+                    default=True)
 
     
     args = parser.parse_args()
