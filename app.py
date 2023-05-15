@@ -44,21 +44,23 @@ def main(args):
 
     vel_factor = 60/inf['interval']
 
-    with Plugin() as plugin, Camera(args.input) as camera:
+    with Plugin() as plugin:
         #get video frame and crop info into the dictionary.
-        inf = cropMarginInfo(camera, inf)
+        with Camera(args.input) as camera:
+            inf = cropMarginInfo(camera, inf)
     
         #Counting frames and time-steps for netcdf output requirment. 
         fcount = 0
         
-        try:
-            sample = camera.snapshot()
-        except Exception as e:
-            logging.error(f"Run-time error in First camera.snapshot: {e}")
-            plugin.publish('exit.error', e)
-            sys.exit(-1)
-        frame_time = sample.timestamp
-        fcount, sky_curr = cropFrame(sample, fcount, inf)
+        with Camera(args.input) as camera:
+            try:
+                sample = camera.snapshot()
+            except Exception as e:
+                logging.error(f"Run-time error in First camera.snapshot: {e}")
+                plugin.publish('exit.error', e)
+                sys.exit(-1)
+            frame_time = sample.timestamp
+            fcount, sky_curr = cropFrame(sample, fcount, inf)
 
         run_on = True
 
@@ -66,12 +68,13 @@ def main(args):
             if inf['interval'] > 0:
                 time.sleep(inf['interval'])        
             #read new frame
-            try:
-                sample = camera.snapshot()
-            except Exception as e:
-                logging.error(f"Run-time error in Second camera.snapshot: {e}")
-                plugin.publish('exit.error', e)
-                sys.exit(-1)
+            with Camera(args.input) as camera:
+                try:
+                    sample = camera.snapshot()
+                except Exception as e:
+                    logging.error(f"Run-time error in Second camera.snapshot: {e}")
+                    plugin.publish('exit.error', e)
+                    sys.exit(-1)
             frame_time = sample.timestamp
             fcount, sky_new = cropFrame(sample, fcount, inf)
             
@@ -94,7 +97,7 @@ def main(args):
             flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
             mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
                                                         flow_v.mean())
-            mag_mean_minute = np.round(mag_mean * vel_factor, 0)
+            mag_mean_minute = np.round(mag_mean * vel_factor, decimals=0)
             
             #mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
 
