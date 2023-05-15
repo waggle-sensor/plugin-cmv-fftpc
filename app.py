@@ -86,18 +86,18 @@ def main(args):
                                                 iterations=3, poly_n=inf['poly_n'], 
                                                 poly_sigma=inf['poly_s'], flags=0)
             # Computes the magnitude and angle of the 2D vectors
-            flow= np.round(flow, decimals=0)
+            flow= np.floor(flow)
 
-            #flow_u = np.ma.masked_equal(flow[..., 0], 0)
-            #flow_v = np.ma.masked_equal(flow[..., 1], 0)
-            #flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
-            #flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
-            #mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
-                                                        #flow_v.mean())
+            flow_u = np.ma.masked_equal(flow[..., 0], 0)
+            flow_v = np.ma.masked_equal(flow[..., 1], 0)
+            flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
+            flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
+            mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
+                                                        flow_v.mean())
+            mag_mean_minute = np.round(mag_mean * vel_factor, 0)
             
-            mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
-            mag_mean_minute = mag.mean() * vel_factor 
-            dir_mean = ang.mean() 
+            #mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+
 
     
             # Publish the output
@@ -138,7 +138,7 @@ if __name__ == "__main__":
                         default="file://test-data/sgptsimovieS01.a1.20160726.000000.mpg")
 #                        default="/app/test-data/sgptsimovieS01.a1.20160726.000000.mpg")   
     parser.add_argument('--i', type=int, 
-                        help='Time interval in seconds.', default=60)
+                        help='Time interval in seconds.', default=30)
     parser.add_argument('--c', type=int,
                         help='channels, 0=R, 1=G, 2=B, 9=Gr', default=0)
     parser.add_argument('--k', type=float,
