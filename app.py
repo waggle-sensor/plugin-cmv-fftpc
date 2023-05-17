@@ -88,13 +88,16 @@ def main(args):
                                                 winsize=inf['winsize'], 
                                                 iterations=3, poly_n=inf['poly_n'], 
                                                 poly_sigma=inf['poly_s'], flags=0)
+            
             # Computes the magnitude and angle of the 2D vectors
             flow= np.floor(flow)
 
             flow_u = np.ma.masked_equal(flow[..., 0], 0)
             flow_v = np.ma.masked_equal(flow[..., 1], 0)
-            flow_u = np.ma.masked_where(np.ma.getmask(flow_v), flow_u)
-            flow_v = np.ma.masked_where(np.ma.getmask(flow_u), flow_v)
+            mask = np.ma.mask_or(np.ma.getmask(flow_v), np.ma.getmask(flow_u))
+            flow_u = np.ma.masked_where(mask, flow_u)
+            flow_v = np.ma.masked_where(mask, flow_v)
+
             mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
                                                         flow_v.mean())
             mag_mean_minute = np.round(mag_mean * vel_factor, decimals=0)
@@ -108,6 +111,7 @@ def main(args):
             plugin.publish('cmv.mean.dir.degrees', float(dir_mean), timestamp=frame_time)
             #plugin.publish('cmv.mean.u.debug', float(flow_u.mean()))
             #plugin.publish('cmv.mean.v.debug', float(flow_v.mean()))
+
             
 
 
@@ -124,8 +128,8 @@ def main(args):
                     os.remove(img1_file_name)
                 except: pass
                 
-            #if args.oneshot:
-            run_on = False
+            if args.oneshot:
+                run_on = False
             
 
 
@@ -150,13 +154,13 @@ if __name__ == "__main__":
                         help='''Quality of the motion field.
                         Sets averaging window, poly_n and poly_sigma.
                         1-turbulant: detailed motion field but noisy.
-                        2-smooth: lesser noise and fast computation,''',
-                        default=1)
+                        2-smooth: less noisy and faster computation,''',
+                        default=2)
     parser.add_argument('--thr', type=int, 
                         help='''Uploads images when magnitude is above this threshold''',
                         default=10)
     parser.add_argument('--oneshot', action= 'store_true',
-                    help='''Run once and exit.''') #This is not working as intended.
+                    help='''Run once and exit.''') #This is not working as intended when default option is used.
 
     
     args = parser.parse_args()
