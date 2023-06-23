@@ -114,7 +114,7 @@ def main(args):
 
             flow= np.ma.masked_where(mag_mask<thres_mag, flow)
 
-            if np.ma.MaskedArray.count()==0:
+            if np.ma.MaskedArray.count(flow)==0:
                 plugin.publish('exit_status', 0)
 
             #recompute the mag and angle
