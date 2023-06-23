@@ -156,7 +156,7 @@ def main(args):
                 # make it zero for next iteration
                 seg_count[seg_id] = 0
                 meta={'seg_id':seg_id,
-                      'nsegments':segments_found
+                      'nsegments':segments_found,
                       'flag': 'debug'}
 
                 #Publish the output
@@ -169,16 +169,12 @@ def main(args):
                 
 
             # If it crossed the threshold, upload both images
-            if mag_mean_minute > args.thr:
-                img2_file_name = 'img2_'+str(frame_time)+'.jpg'
-                img1_file_name = 'img1_'+str(frame_time)+'.jpg'
+            if mag_mean > args.thr:
+                img2_file_name = 'img2_'+str(sample.timestamp)+'.jpg'
                 cv2.imwrite(img2_file_name, sky_curr)
-                cv2.imwrite(img1_file_name, sky_prev)
                 plugin.upload_file(img2_file_name, meta={})
-                plugin.upload_file(img1_file_name, meta={})
                 try:
                     os.remove(img2_file_name)
-                    os.remove(img1_file_name)
                 except: pass
                 
             if args.oneshot:
