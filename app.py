@@ -20,7 +20,10 @@ from waggle.plugin import Plugin
 from waggle.data.vision import Camera
 
 import numpy as np
-#from scipy import stats as st
+from skimage.filters import threshold_otsu
+from skimage import color
+from skimage.segmentation import slic, mark_boundaries
+
 from inf import getInfoDict, cropMarginInfo, cropFrame, vectorMagnitudeDirection
 import cv2
 
@@ -39,10 +42,10 @@ def main(args):
     """ Takes in input args and run the whole CMV workflow.
     """
     
+
+
     #Create a dictionary to save settings
     inf = getInfoDict(args)
-
-    vel_factor = 60/inf['interval']
 
     with Plugin() as plugin:
         #get video frame and crop info into the dictionary.
@@ -59,7 +62,7 @@ def main(args):
                 logging.error(f"Run-time error in First camera.snapshot: {e}")
                 plugin.publish('exit.error', e)
                 sys.exit(-1)
-            frame_time = sample.timestamp
+            frame_time_curr = sample.timestamp/10**9
             fcount, sky_curr = cropFrame(sample, fcount, inf)
 
         run_on = True
@@ -75,9 +78,15 @@ def main(args):
                     logging.error(f"Run-time error in Second camera.snapshot: {e}")
                     plugin.publish('exit.error', e)
                     sys.exit(-1)
-            frame_time = sample.timestamp
+            frame_time_new = sample.timestamp/10**9
             fcount, sky_new = cropFrame(sample, fcount, inf)
-            
+
+
+            frame_time_prev = frame_time_curr
+            frame_time_curr = frame_time_new
+
+            vel_factor = 60/(frame_time_curr-frame_time_prev)
+
             sky_prev = sky_curr
             sky_curr = sky_new
            
@@ -89,32 +98,75 @@ def main(args):
                                                 iterations=3, poly_n=inf['poly_n'], 
                                                 poly_sigma=inf['poly_s'], flags=0)
             
-            # Computes the magnitude and angle of the 2D vectors
-            flow= np.floor(flow)
 
-            flow_u = np.ma.masked_equal(flow[..., 0], 0)
-            flow_v = np.ma.masked_equal(flow[..., 1], 0)
-            mask = np.ma.mask_or(np.ma.getmask(flow_v), np.ma.getmask(flow_u))
-            flow_u = np.ma.masked_where(mask, flow_u)
-            flow_v = np.ma.masked_where(mask, flow_v)
-
-            mag_mean, dir_mean = vectorMagnitudeDirection(flow_u.mean(),
-                                                        flow_v.mean())
-            mag_mean_minute = np.round(mag_mean * vel_factor, decimals=0)
             
-            #mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+            mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = False)
+            
+            #Use threshold for small values to remove background noise
+            thres_mag = threshold_otsu(mag)
+            if thres_mag < 2:
+                thres_mag = 2
+            if thres_mag >10:
+                thres_mag = 10
 
 
-    
-            # Publish the output
-            plugin.publish('cmv.mean.vel.pixpmin', float(mag_mean_minute), timestamp=frame_time)
-            plugin.publish('cmv.mean.dir.degrees', float(dir_mean), timestamp=frame_time)
-            #plugin.publish('cmv.mean.u.debug', float(flow_u.mean()))
-            #plugin.publish('cmv.mean.v.debug', float(flow_v.mean()))
+            mag_mask = np.repeat(mag[:, :, np.newaxis], 2, axis=2)
+            mag_mask.shape
+            flow= np.ma.masked_where(mag_mask<thres_mag, flow)
 
-            print(mag_mean)
-            print(dir_mean)
+            #recompute the mag and angle
+            mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = True)
+            ang = (90+ang) % 360
 
+
+            # Number of Superpixels
+            num_seg = args.segments
+
+            #Use HSV coding for clustering
+            hsv = np.zeros([mag.shape[0], mag.shape[1], 3])
+            hsv[..., 1] = 250 #255-curr_frame #250
+
+            # Use Hue and Value to encode the Optical Flow
+            hsv[..., 0] = ang/2
+            hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
+            # Convert HSV image to BGR
+            image = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+            # High compactness = squared regions & higher sigma = rounded segments
+            # Achanta, R., Shaji, A., Smith, K., Lucchi, A., Fua, P., & Süsstrunk, S. 
+            # (2012). SLIC superpixels compared to state-of-the-art superpixel methods.
+            # IEEE transactions on pattern analysis and machine intelligence, 
+            # 34(11), 2274-2282.
+            segments = slic(image, n_segments=num_seg, sigma=2, compactness=10, convert2lab=True) 
+            segments_found = segments.max()
+            # Superpixel average color
+            superpixels = color.label2rgb(segments, image, kind='avg')
+
+            #first remove the zero vector region from segmentation
+            seg_count = np.bincount(segments.ravel())
+
+            for i in range(0, seg_count.shape[0]):
+                seg_id = seg_count.argmax()
+                seg_size = seg_count.max()
+                mag_mean = np.mean(mag[segments==seg_id])*vel_factor
+                ang_mean = np.mean(ang[segments==seg_id])
+                mag_median = np.median(mag[segments==seg_id])*vel_factor
+                ang_median = np.median(ang[segments==seg_id])
+
+                # make it zero for next iteration
+                seg_count[seg_id] = 0
+                meta={'seg_id':seg_id,
+                      'nsegments':segments_found
+                      'flag': 'debug'}
+
+                #Publish the output
+                if int(mag_mean) > thres_mag:
+                    plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.mean.dir.degN', float(ang_mean), meat=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.median.dir.degN', float(ang_median), meat=meta, timestamp=sample.timestamp)
+                    print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, int(mag_mean), int(ang_mean), seg_size, seg_id))
+                
 
             # If it crossed the threshold, upload both images
             if mag_mean_minute > args.thr:
@@ -159,7 +211,10 @@ if __name__ == "__main__":
                         default=2)
     parser.add_argument('--thr', type=int, 
                         help='''Uploads images when magnitude is above this threshold''',
-                        default=10)
+                        default=50)
+    parser.add_argument('--segments', type=int, 
+                        help=''' Number of Segments. ''',
+                        default=100)
     parser.add_argument('--oneshot', action= 'store_true',
                     help='''Run once and exit.''') #This is not working as intended when default option is used.
 
