@@ -6,6 +6,7 @@ Created on Fri Oct  8 13:06:48 2021
 """
 import sys
 import numpy as np
+import cv2
 
 
 
@@ -115,12 +116,22 @@ def getCropMargin(inf):
 def cropFrame(sample, fcount, inf):
     """ Extract and crops frame using crop margins from the 'inf'.
     """
+    lap_kernel = np.array([[-1,-1,-1], 
+                       [-1, 9,-1],
+                       [-1,-1,-1]])
+    
     frame = sample.data
-    sky = frame[inf['y1']:inf['y2'], inf['x1']:inf['x2'], inf['channel']]
+    sky = frame[inf['y1']:inf['y2'], inf['x1']:inf['x2'], :]
+    if inf['channel'] == 9:
+        sky = cv2.cvtColor(sky, cv2.COLOR_RGB2GRAY)
+    else:
+        sky = sky[:, :, inf['channel']]
     fcount += 1
     
     #sys.stdout.write('Current Frame:' + str(fcount)+ '\r')
     #sys.stdout.flush()
+
+    sky = cv2.filter2D(sky, -1, lap_kernel)
 
     return fcount, sky
 
