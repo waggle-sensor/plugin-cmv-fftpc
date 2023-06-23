@@ -123,7 +123,7 @@ def main(args):
             num_seg = args.segments
 
             #Use HSV coding for clustering
-            hsv = np.zeros([mag.shape[0], mag.shape[1], 3])
+            hsv = np.zeros([mag.shape[0], mag.shape[1], 3], dtype=np.float32)
             hsv[..., 1] = 250 #255-curr_frame #250
 
             # Use Hue and Value to encode the Optical Flow
