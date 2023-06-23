@@ -160,7 +160,7 @@ def main(args):
                       'flag': 'debug'}
 
                 #Publish the output
-                if int(mag_mean) > thres_mag:
+                if not np.isnan(mag_mean) and int(mag_mean) > thres_mag:
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degN', float(ang_mean), meat=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
@@ -169,13 +169,13 @@ def main(args):
                 
 
             # If it crossed the threshold, upload both images
-            if mag_mean > args.thr:
+            '''if mag_mean > args.thr:
                 img2_file_name = 'img2_'+str(sample.timestamp)+'.jpg'
                 cv2.imwrite(img2_file_name, sky_curr)
                 plugin.upload_file(img2_file_name, meta={})
                 try:
                     os.remove(img2_file_name)
-                except: pass
+                except: pass'''
                 
             if args.oneshot:
                 run_on = False
