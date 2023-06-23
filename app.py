@@ -112,7 +112,8 @@ def main(args):
             #plugin.publish('cmv.mean.u.debug', float(flow_u.mean()))
             #plugin.publish('cmv.mean.v.debug', float(flow_v.mean()))
 
-            
+            print(mag_mean)
+            print(dir_mean)
 
 
             # If it crossed the threshold, upload both images
@@ -142,7 +143,7 @@ if __name__ == "__main__":
                                      motion vectors in the hemispheric camera''')
     parser.add_argument('--input', type=str, 
                         help='Path to an input video or images.', 
-                        default="file://test-data/sgptsimovieS01.a1.20160726.000000.mpg")
+                        default="file://test-data/sgp-sage.mp4")
 #                        default="/app/test-data/sgptsimovieS01.a1.20160726.000000.mpg")   
     parser.add_argument('--i', type=int, 
                         help='Time interval in seconds.', default=30)
