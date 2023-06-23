@@ -111,8 +111,11 @@ def main(args):
 
 
             mag_mask = np.repeat(mag[:, :, np.newaxis], 2, axis=2)
-            mag_mask.shape
+
             flow= np.ma.masked_where(mag_mask<thres_mag, flow)
+
+            if np.ma.MaskedArray.count()==0:
+                plugin.publish('exit_status', 0)
 
             #recompute the mag and angle
             mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = True)
