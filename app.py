@@ -22,21 +22,11 @@ from waggle.data.vision import Camera
 import numpy as np
 from skimage.filters import threshold_otsu
 from skimage import color
-from skimage.segmentation import slic, mark_boundaries
+from skimage.segmentation import slic
 
-from inf import getInfoDict, cropMarginInfo, cropFrame, vectorMagnitudeDirection
+from inf import getInfoDict, cropMarginInfo, cropFrame
 import cv2
 
-
-
-###For debugging
-#import matplotlib.pyplot as plt
-#import matplotlib.animation as animation
-
-#txt_file = '/Users/bhupendra/Desktop/oftest_flip.txt'
-
-#outfile = open(txt_file, "a")
-#outfile.writelines('magnitude\tdirection\n')
 
 def main(args):
     """ Takes in input args and run the whole CMV workflow.
@@ -101,9 +91,11 @@ def main(args):
 
             
             mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = False)
-            
+            mag=mag * vel_factor
             #Use threshold for small values to remove background noise
             thres_mag = threshold_otsu(mag)
+
+
             if thres_mag < 2:
                 thres_mag = 2
             if thres_mag >10:
@@ -119,6 +111,7 @@ def main(args):
 
             #recompute the mag and angle
             mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = True)
+            mag = mag * vel_factor
             ang = (90+ang) % 360
 
 
@@ -151,25 +144,34 @@ def main(args):
             for i in range(0, seg_count.shape[0]):
                 seg_id = seg_count.argmax()
                 seg_size = seg_count.max()
-                mag_mean = np.mean(mag[segments==seg_id])*vel_factor
+                mag_mean = np.mean(mag[segments==seg_id])
                 ang_mean = np.mean(ang[segments==seg_id])
-                mag_median = np.median(mag[segments==seg_id])*vel_factor
+                mag_median = np.median(mag[segments==seg_id])
                 ang_median = np.median(ang[segments==seg_id])
-
+                
                 # make it zero for next iteration
                 seg_count[seg_id] = 0
                 meta={'seg_id':seg_id,
-                      'nsegments':segments_found,
-                      'flag': 'debug'}
+                      'nsegments_found':segments_found,
+                      'input': args.input,
+                      'channel': args.c,
+                      'image_frac': args.k,
+                      'quality': args.q,
+                      'nsegments_asked':args.segments
+                      }
+                
 
                 #Publish the output
                 if not np.isnan(mag_mean) and int(mag_mean) > thres_mag:
+                    plugin.publish('cmv.motion.detected', 1)
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degN', float(ang_mean), meat=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
-                    plugin.publish('cmv.median.dir.degN', float(ang_median), meat=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.median.dir.degN', float(ang_median), meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('thresh.otsu', thres_mag, meta=meta, timestamp=sample.timestamp)
                     print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, int(mag_mean), int(ang_mean), seg_size, seg_id))
-                
+                else: 
+                    plugin.publish('cmv.motion.detected', 0)
 
             # If it crossed the threshold, upload both images
             '''if mag_mean > args.thr:
