@@ -165,7 +165,7 @@ def main(args):
                 if not np.isnan(mag_mean) and float(mag_mean) > thres_mag:
                     plugin.publish('cmv.motion.detected', int(1), meta=meta)
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
-                    plugin.publish('cmv.mean.dir.degN', float(ang_mean), meat=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.mean.dir.degN', float(ang_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.dir.degN', float(ang_median), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('thresh.otsu', float(thres_mag), meta=meta, timestamp=sample.timestamp)
