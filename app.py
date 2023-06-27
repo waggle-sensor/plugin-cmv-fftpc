@@ -162,14 +162,14 @@ def main(args):
                 
 
                 #Publish the output
-                if not np.isnan(mag_mean) and int(mag_mean) > thres_mag:
-                    plugin.publish('cmv.motion.detected', int(1))
+                if not np.isnan(mag_mean) and float(mag_mean) > thres_mag:
+                    plugin.publish('cmv.motion.detected', int(1), meta=meta)
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degN', float(ang_mean), meat=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.dir.degN', float(ang_median), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('thresh.otsu', float(thres_mag), meta=meta, timestamp=sample.timestamp)
-                    print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, int(mag_mean), int(ang_mean), seg_size, seg_id))
+                    print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, float(mag_mean), int(ang_mean), seg_size, seg_id))
                 else: 
                     plugin.publish('cmv.motion.detected', int(0), meta=meta, timestamp=sample.timestamp)
 
