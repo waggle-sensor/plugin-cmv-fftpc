@@ -171,7 +171,7 @@ def main(args):
                     plugin.publish('thresh.otsu', thres_mag, meta=meta, timestamp=sample.timestamp)
                     print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, int(mag_mean), int(ang_mean), seg_size, seg_id))
                 else: 
-                    plugin.publish('cmv.motion.detected', 0)
+                    plugin.publish('cmv.motion.detected', 0, meta=meta)
 
             # If it crossed the threshold, upload both images
             '''if mag_mean > args.thr:
