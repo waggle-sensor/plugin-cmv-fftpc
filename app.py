@@ -151,27 +151,27 @@ def main(args):
                 
                 # make it zero for next iteration
                 seg_count[seg_id] = 0
-                meta={'seg_id':seg_id,
-                      'nsegments_found':segments_found,
+                meta={'seg_id':int(seg_id),
+                      'nsegments_found':int(segments_found),
                       'input': args.input,
-                      'channel': args.c,
-                      'image_frac': args.k,
-                      'quality': args.q,
-                      'nsegments_asked':args.segments
+                      'channel': int(args.c),
+                      'image_frac': float(args.k),
+                      'quality': int(args.q),
+                      'nsegments_asked':int(args.segments)
                       }
                 
 
                 #Publish the output
                 if not np.isnan(mag_mean) and int(mag_mean) > thres_mag:
-                    plugin.publish('cmv.motion.detected', 1)
+                    plugin.publish('cmv.motion.detected', int(1))
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degN', float(ang_mean), meat=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.dir.degN', float(ang_median), meta=meta, timestamp=sample.timestamp)
-                    plugin.publish('thresh.otsu', thres_mag, meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('thresh.otsu', float(thres_mag), meta=meta, timestamp=sample.timestamp)
                     print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, int(mag_mean), int(ang_mean), seg_size, seg_id))
                 else: 
-                    plugin.publish('cmv.motion.detected', 0, meta=meta)
+                    plugin.publish('cmv.motion.detected', int(0), meta=meta, timestamp=sample.timestamp)
 
             # If it crossed the threshold, upload both images
             '''if mag_mean > args.thr:
