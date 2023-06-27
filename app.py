@@ -107,7 +107,9 @@ def main(args):
             flow= np.ma.masked_where(mag_mask<thres_mag, flow)
 
             if np.ma.MaskedArray.count(flow)==0:
-                plugin.publish('exit_status', 0)
+                plugin.publish('cmv.motion.detected', int(0), meta=meta, timestamp=sample.timestamp)
+                continue
+
 
             #recompute the mag and angle
             mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = True)
