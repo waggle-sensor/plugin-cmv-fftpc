@@ -108,7 +108,7 @@ def main(args):
             flow= np.ma.masked_where(mag_mask<thres_mag, flow)
 
             if np.ma.MaskedArray.count(flow)==0:
-                plugin.publish('cmv.motion.detected', int(0), meta=meta, timestamp=sample.timestamp)
+                plugin.publish('cmv.motion.detected', int(-1), meta=meta, timestamp=sample.timestamp)
                 continue
 
 
@@ -144,6 +144,7 @@ def main(args):
             #first remove the zero vector region from segmentation
             seg_count = np.bincount(segments.ravel())
 
+            motion_detected = 0
             for i in range(0, seg_count.shape[0]):
                 seg_id = seg_count.argmax()
                 seg_size = seg_count.max()
@@ -167,12 +168,14 @@ def main(args):
 
                 #Publish the output
                 if not np.isnan(mag_mean) and float(mag_median) > thres_mag:
-                    plugin.publish('cmv.motion.detected', int(1), meta=meta)
+                    motion_detected = motion_detected + 1
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degn', float(ang_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.dir.degn', float(ang_median), meta=meta, timestamp=sample.timestamp)
                     #print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, float(mag_mean), int(ang_mean), seg_size, seg_id))
+            
+            plugin.publish('cmv.motion.detected', motion_detected, meta=meta)
 
             # If it crossed the threshold, upload both images
             '''if mag_mean > args.thr:
