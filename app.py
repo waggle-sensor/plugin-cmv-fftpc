@@ -153,13 +153,13 @@ def main(args):
                 
                 # make it zero for next iteration
                 seg_count[seg_id] = 0
-                meta={'seg_id':int(seg_id),
-                      'nsegments_found':int(segments_found),
+                meta={'seg_id':str(seg_id),
+                      'nsegments_found':str(segments_found),
                       'input': args.input,
-                      'channel': int(args.c),
-                      'image_frac': float(args.k),
-                      'quality': int(args.q),
-                      'nsegments_asked':int(args.segments)
+                      'channel': str(args.c),
+                      'image_frac': str(args.k),
+                      'quality': str(args.q),
+                      'nsegments_asked':str(args.segments)
                       }
                 
 
