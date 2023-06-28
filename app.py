@@ -155,6 +155,7 @@ def main(args):
                 # make it zero for next iteration
                 seg_count[seg_id] = 0
                 meta={'seg_id':str(seg_id),
+                      'seg_size': str(seg_size),
                       'nsegments_found':str(segments_found),
                       'input': args.input,
                       'channel': str(args.c),
@@ -165,7 +166,7 @@ def main(args):
                 
 
                 #Publish the output
-                if not np.isnan(mag_mean) and float(mag_mean) > thres_mag:
+                if not np.isnan(mag_mean) and float(mag_median) > thres_mag:
                     plugin.publish('cmv.motion.detected', int(1), meta=meta)
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degn', float(ang_mean), meta=meta, timestamp=sample.timestamp)
