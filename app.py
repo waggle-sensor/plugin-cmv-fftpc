@@ -95,6 +95,7 @@ def main(args):
             #Use threshold for small values to remove background noise
             thres_mag = threshold_otsu(mag)
 
+            plugin.publish('cmv.thresh.otsu', float(thres_mag), timestamp=sample.timestamp)
 
             if thres_mag < 2:
                 thres_mag = 2
@@ -170,10 +171,7 @@ def main(args):
                     plugin.publish('cmv.mean.dir.degn', float(ang_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.dir.degn', float(ang_median), meta=meta, timestamp=sample.timestamp)
-                    plugin.publish('thresh.otsu', float(thres_mag), meta=meta, timestamp=sample.timestamp)
                     #print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, float(mag_mean), int(ang_mean), seg_size, seg_id))
-                else: 
-                    plugin.publish('cmv.motion.detected', int(0), meta=meta, timestamp=sample.timestamp)
 
             # If it crossed the threshold, upload both images
             '''if mag_mean > args.thr:
