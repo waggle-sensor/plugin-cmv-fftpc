@@ -93,14 +93,28 @@ def main(args):
             mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = False)
             mag=mag * vel_factor
             #Use threshold for small values to remove background noise
-            thres_mag = threshold_otsu(mag)
+            thres_otsu = threshold_otsu(mag)
 
-            plugin.publish('cmv.thresh.otsu', float(thres_mag), timestamp=sample.timestamp)
+            plugin.publish('cmv.thresh.otsu', float(thres_otsu), timestamp=sample.timestamp)
 
-            if thres_mag < 2:
+            # If it crossed the max threshold, upload sample image
+            if thres_otsu > args.thr:
+                img2_file_name = 'img2_'+str(sample.timestamp)+'.jpg'
+                cv2.imwrite(img2_file_name, sky_curr)
+                plugin.upload_file(img2_file_name, meta={'thres_otsu':str(thres_otsu)}, timestamp=sample.timestamp)
+                try:
+                    os.remove(img2_file_name)
+                except Exception as e:
+                    plugin.publish('exit.error', e)
+                    sys.exit(-1)
+            
+
+            if thres_otsu < 2:
                 thres_mag = 2
-            if thres_mag >10:
+            if thres_otsu >10:
                 thres_mag = 10
+            else:
+                thres_mag = thres_otsu
 
 
             mag_mask = np.repeat(mag[:, :, np.newaxis], 2, axis=2)
@@ -177,14 +191,6 @@ def main(args):
             
             plugin.publish('cmv.motion.detected', motion_detected, meta=meta, timestamp=sample.timestamp)
 
-            # If it crossed the threshold, upload both images
-            '''if mag_mean > args.thr:
-                img2_file_name = 'img2_'+str(sample.timestamp)+'.jpg'
-                cv2.imwrite(img2_file_name, sky_curr)
-                plugin.upload_file(img2_file_name, meta={})
-                try:
-                    os.remove(img2_file_name)
-                except: pass'''
                 
             if args.oneshot:
                 run_on = False
