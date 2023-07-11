@@ -28,12 +28,29 @@ from inf import getInfoDict, cropMarginInfo, cropFrame
 import cv2
 
 
+
+def upload_image(sky_curr, timestamp, thres_otsu, plugin):
+    """
+    Upload an image to beehive.
+
+    This function uploads the sky_curr image, as a JPEG file.
+    If an exception occurs during file removal, the error message is published.
+    """
+    img2_file_name = 'img2_' + str(timestamp) + '.jpg'
+    cv2.imwrite(img2_file_name, sky_curr)
+    plugin.upload_file(img2_file_name, meta={'thres_otsu': str(thres_otsu)}, timestamp=sample.timestamp)
+
+    try:
+        os.remove(img2_file_name)
+    except Exception as e:
+        plugin.publish('exit.error', e)
+        sys.exit(-1)
+
+
 def main(args):
     """ Takes in input args and run the whole CMV workflow.
     """
     
-
-
     #Create a dictionary to save settings
     inf = getInfoDict(args)
 
@@ -99,16 +116,8 @@ def main(args):
 
             # If it crossed the max threshold, upload sample image
             if thres_otsu > args.thr:
-                img2_file_name = 'img2_'+str(sample.timestamp)+'.jpg'
-                cv2.imwrite(img2_file_name, sky_curr)
-                plugin.upload_file(img2_file_name, meta={'thres_otsu':str(thres_otsu)}, timestamp=sample.timestamp)
-                try:
-                    os.remove(img2_file_name)
-                except Exception as e:
-                    plugin.publish('exit.error', e)
-                    sys.exit(-1)
+                upload_image(sky_curr, sample.timestamp, thres_otsu, plugin)
             
-
             if thres_otsu < 2:
                 thres_mag = 2
             if thres_otsu >10:
