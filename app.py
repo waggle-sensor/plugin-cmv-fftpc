@@ -48,8 +48,18 @@ def upload_image(sky_curr, timestamp, thres_otsu, plugin):
 
 
 def main(args):
-    """ Takes in input args and run the whole CMV workflow.
+    """ Runs the entire CMV workflow.
+    
+    Takes in input args and run the whole CMV workflow i.e. capture frames, 
+    compute optical flow, perform clustering, and publish data to beehive.
+
+    Args:
+        args: The command-line arguments parsed by `argparse`.
+
+    Returns:
+        None
     """
+    
     
     #Create a dictionary to save settings
     inf = getInfoDict(args)
