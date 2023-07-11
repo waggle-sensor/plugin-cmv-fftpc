@@ -8,6 +8,15 @@ imput images, and each pixel of the output array stores the computed optical flo
 corresponding pixel of the input images. The optical flow is represented as a 2D vector,
 where the x and y components of the vector represent the flow along the x and y axis, 
 respectively.
+
+The plugin publishes the following data using the plugin.publish() method:
+- 'cmv.thresh.otsu': Otsu threshold value for motion detection.
+- 'cmv.motion.detected': Number of homogeneous motion segments.
+- 'cmv.mean.mag.pxpm': Mean magnitude of motion in pixels per minute for each segment.
+- 'cmv.mean.dir.degn': Mean direction of motion in degrees for each segment.
+- 'cmv.median.mag.pxpm': Median magnitude of motion.
+- 'cmv.median.dir.degn': Median direction of motion.
+
 """
 
 import argparse
@@ -60,7 +69,7 @@ def main(args):
         None
     """
     
-    
+
     #Create a dictionary to save settings
     inf = getInfoDict(args)
 
