@@ -168,6 +168,7 @@ def main(args):
             seg_count = np.bincount(segments.ravel())
 
             motion_detected = 0
+
             for i in range(0, seg_count.shape[0]):
                 seg_id = seg_count.argmax()
                 seg_size = seg_count.max()
@@ -192,6 +193,8 @@ def main(args):
                 #Publish the output
                 if not np.isnan(mag_mean) and float(mag_median) > thres_mag:
                     motion_detected = motion_detected + 1
+                    meta['seg_rank']= motion_detected # At this time `motions_detected` counter shows rank of the segment
+
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degn', float(ang_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
