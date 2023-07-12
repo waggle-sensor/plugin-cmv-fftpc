@@ -129,7 +129,7 @@ def main(args):
             mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees = False)
             mag=mag * vel_factor
             #Use threshold for small values to remove background noise
-            thres_otsu = threshold_otsu(mag)
+            thres_otsu = np.round(threshold_otsu(mag))
 
             plugin.publish('cmv.thresh.otsu', float(thres_otsu), timestamp=sample.timestamp)
 
@@ -215,10 +215,10 @@ def main(args):
                     motion_detected = motion_detected + 1
                     meta['seg_rank']= str(motion_detected) # At this time `motions_detected` counter shows rank of the segment
 
-                    plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
-                    plugin.publish('cmv.mean.dir.degn', float(ang_mean), meta=meta, timestamp=sample.timestamp)
-                    plugin.publish('cmv.median.mag.pxpm', float(mag_median), meta=meta, timestamp=sample.timestamp)
-                    plugin.publish('cmv.median.dir.degn', float(ang_median), meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.mean.mag.pxpm', np.round(mag_mean), meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.mean.dir.degn', np.round(ang_mean), meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.median.mag.pxpm', np.round(mag_median), meta=meta, timestamp=sample.timestamp)
+                    plugin.publish('cmv.median.dir.degn', np.round(ang_median), meta=meta, timestamp=sample.timestamp)
                     #print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, float(mag_mean), int(ang_mean), seg_size, seg_id))
             
             plugin.publish('cmv.motion.detected', motion_detected, meta=meta, timestamp=sample.timestamp)
