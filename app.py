@@ -137,12 +137,13 @@ def main(args):
             if thres_otsu > args.thr:
                 upload_image(sky_curr, sample.timestamp, thres_otsu, plugin)
             
+            thres_mag = thres_otsu
+            #Reset the threshold for better range
             if thres_otsu < 2:
                 thres_mag = 2
             if thres_otsu >10:
                 thres_mag = 10
-            else:
-                thres_mag = thres_otsu
+                
 
 
             mag_mask = np.repeat(mag[:, :, np.newaxis], 2, axis=2)
@@ -212,7 +213,7 @@ def main(args):
                 #Publish the output
                 if not np.isnan(mag_mean) and float(mag_median) > thres_mag:
                     motion_detected = motion_detected + 1
-                    meta['seg_rank']= motion_detected # At this time `motions_detected` counter shows rank of the segment
+                    meta['seg_rank']= str(motion_detected) # At this time `motions_detected` counter shows rank of the segment
 
                     plugin.publish('cmv.mean.mag.pxpm', float(mag_mean), meta=meta, timestamp=sample.timestamp)
                     plugin.publish('cmv.mean.dir.degn', float(ang_mean), meta=meta, timestamp=sample.timestamp)
