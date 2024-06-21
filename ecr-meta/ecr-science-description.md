@@ -46,7 +46,7 @@ df = sage_data_client.query(
 # print results in data frame
 print(df)
 ```
-For more information, please see [Access and use data documentation](https://docs.sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
+For more information, please see [Access and use data documentation](https://sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
 
 # References
 [1] Raut, B. A., Collis, S., Ferrier, N., Muradyan, P., Sankaran, R., Jackson, R., ... & Beckman, P. "Phase correlation on the edge for estimating cloud motion". Atmospheric Measurement Techniques Discussions, 2022, 1-18.
