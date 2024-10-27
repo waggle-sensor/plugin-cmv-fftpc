@@ -47,7 +47,7 @@ def upload_image(sky_curr, timestamp, thres_otsu, plugin):
     """
     img2_file_name = 'img2_' + str(timestamp) + '.jpg'
     cv2.imwrite(img2_file_name, sky_curr)
-    plugin.upload_file(img2_file_name, meta={'thres_otsu': str(thres_otsu)}, timestamp=sample.timestamp)
+    plugin.upload_file(img2_file_name, meta={'thres_otsu': str(thres_otsu)}, timestamp=timestamp)
 
     try:
         os.remove(img2_file_name)
