@@ -221,7 +221,7 @@ def main(args):
                     plugin.publish('cmv.median.dir.degn', np.round(ang_median), meta=meta, timestamp=sample.timestamp)
                     #print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, float(mag_mean), int(ang_mean), seg_size, seg_id))
             
-            plugin.publish('cmv.motion.detected', motion_detected, meta=meta, timestamp=sample.timestamp)
+            plugin.publish('cmv.motion.detected', motion_detected, timestamp=sample.timestamp)
 
                 
             if args.oneshot:
