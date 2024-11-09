@@ -151,7 +151,7 @@ def main(args):
             flow= np.ma.masked_where(mag_mask<thres_mag, flow)
 
             if np.ma.MaskedArray.count(flow)==0:
-                plugin.publish('cmv.motion.detected', int(-1), meta=meta, timestamp=sample.timestamp)
+                plugin.publish('cmv.motion.detected', int(-1), timestamp=sample.timestamp)
                 continue
 
 
