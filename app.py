@@ -50,12 +50,6 @@ def upload_image(sky_curr, timestamp, thres_otsu, plugin):
         img2_file_name, meta={"thres_otsu": str(thres_otsu)}, timestamp=timestamp
     )
 
-    try:
-        os.remove(img2_file_name)
-    except Exception as e:
-        plugin.publish("exit.error", e)
-        sys.exit(-1)
-
 
 def main(args):
     """Runs the entire CMV workflow.
@@ -102,7 +96,7 @@ def main(args):
                     sample = camera.snapshot()
                 except Exception as e:
                     logging.error(f"Run-time error in Second camera.snapshot: {e}")
-                    plugin.publish("exit.error", e)
+                    plugin.publish("exit.error", 'camera error')
                     sys.exit(-1)
             frame_time_new = sample.timestamp / 10**9
             fcount, sky_new = cropFrame(sample, fcount, inf)
@@ -152,13 +146,13 @@ def main(args):
 
             mag_mask = np.repeat(mag[:, :, np.newaxis], 2, axis=2)
 
-            flow = np.ma.masked_where(mag_mask < thres_mag, flow)
+            #flow = np.ma.masked_where(mag_mask < thres_mag, flow)
 
-            if np.ma.MaskedArray.count(flow) == 0:
-                plugin.publish(
-                    "cmv.motion.detected", int(-1), timestamp=sample.timestamp
-                )
-                continue
+            #if np.ma.MaskedArray.count(flow) == 0:
+            #    plugin.publish(
+            #        "cmv.motion.detected", int(-1), timestamp=sample.timestamp
+            #    )
+            #    continue
 
             # recompute the mag and angle
             mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1], angleInDegrees=True)
@@ -195,7 +189,7 @@ def main(args):
 
             motion_detected = 0
 
-            for i in range(0, seg_count.shape[0]):
+            for i in range(0, args.seg_pub):
                 seg_id = seg_count.argmax()
                 seg_size = seg_count.max()
                 mag_mean = np.mean(mag[segments == seg_id])
@@ -217,37 +211,36 @@ def main(args):
                 }
 
                 # Publish the output
-                if not np.isnan(mag_mean) and float(mag_median) > thres_mag:
-                    motion_detected = motion_detected + 1
-                    meta["seg_rank"] = str(
-                        motion_detected
-                    )  # At this time `motions_detected` counter shows rank of the segment
+                motion_detected = motion_detected + 1
+                meta["seg_rank"] = str(
+                    motion_detected
+                )  # At this time `motions_detected` counter shows rank of the segment
 
-                    plugin.publish(
-                        "cmv.mean.mag.pxpm",
-                        np.round(mag_mean),
-                        meta=meta,
-                        timestamp=sample.timestamp,
-                    )
-                    plugin.publish(
-                        "cmv.mean.dir.degn",
-                        np.round(ang_mean),
-                        meta=meta,
-                        timestamp=sample.timestamp,
-                    )
-                    plugin.publish(
-                        "cmv.median.mag.pxpm",
-                        np.round(mag_median),
-                        meta=meta,
-                        timestamp=sample.timestamp,
-                    )
-                    plugin.publish(
-                        "cmv.median.dir.degn",
-                        np.round(ang_median),
-                        meta=meta,
-                        timestamp=sample.timestamp,
-                    )
-                    # print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, float(mag_mean), int(ang_mean), seg_size, seg_id))
+                plugin.publish(
+                    "cmv.mean.mag.pxpm",
+                    float(np.round(mag_mean)),
+                    meta=meta,
+                    timestamp=sample.timestamp,
+                )
+                plugin.publish(
+                    "cmv.mean.dir.degn",
+                    float(np.round(ang_mean)),
+                    meta=meta,
+                    timestamp=sample.timestamp,
+                )
+                plugin.publish(
+                    "cmv.median.mag.pxpm",
+                    float(np.round(mag_median)),
+                    meta=meta,
+                    timestamp=sample.timestamp,
+                )
+                plugin.publish(
+                    "cmv.median.dir.degn",
+                    float(np.round(ang_median)),
+                    meta=meta,
+                    timestamp=sample.timestamp,
+                )
+                # print('thres={} \t mag={} angle={}, seg_size={}, seg_id={}'.format(thres_mag, float(mag_mean), int(ang_mean), seg_size, seg_id))
 
             plugin.publish(
                 "cmv.motion.detected", motion_detected, timestamp=sample.timestamp
@@ -295,6 +288,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--segments", type=int, help=""" Number of Segments. """, default=100
+    )
+    parser.add_argument(
+        "--seg_pub", type=int, help=""" publish Segments. """, default=3
     )
     parser.add_argument(
         "--oneshot", action="store_true", help="""Run once and exit."""
