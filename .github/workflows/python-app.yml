@@ -27,9 +27,12 @@ jobs:
       run: |
         docker build -t plugin-cmv .
 
-    # Run tests inside the Docker container
+    # Install pytest and Run Tests
     - name: Run Tests
       run: |
-        docker run --rm plugin-cmv sh -c "pip install pytest && pytest /app/test_app.py"
+        docker run --rm --entrypoint sh plugin-cmv -c "
+        pip install pytest &&
+        pytest /app/test_app.py
+        "
 
 
