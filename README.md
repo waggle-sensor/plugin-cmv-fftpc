@@ -22,23 +22,34 @@ Currently, the plugin reads images from the sky-facing camera every 30 seconds a
 
 The plugin has several arguments that can be set by the user:
 
-    '--input': Path to input file or camera URL.
-    '--i': Time interval in seconds (Default 30 sec).
-    '--c': RGB channels, 0=R, 1=G, 2=B (Default 0 i.e. Red).
-    '--k': Keep fraction of the image after cropping (Default=0.9).
-    '--q': Quality of the motion field (Default 1). Sets averaging window, poly_n and poly_sigma. 1-turbulant: detailed motion field but noisy. 2-smooth: lesser noise and fast computation.
-    '--thr': Upload the images if magnitude crosses this value (Default=10).
+- `--input`: Path to input file or camera URL.
+- `--i`: Time interval in seconds (Default: 30 sec).
+- `--c`: RGB channels, 0=R, 1=G, 2=B (Default: 0, i.e., Red).
+- `--k`: Keep fraction of the image after cropping (Default: 0.9).
+- `--q`: Quality of the motion field (Default: 1). Sets averaging window, poly_n, and poly_sigma.  
+  - `1`: Turbulent - Detailed motion field but noisy.  
+  - `2`: Smooth - Lesser noise and faster computation.
+- `--thr`: Upload images if magnitude crosses this value (Default: 10).
+- `--segments`: Number of segments for superpixel clustering (Default: 100).
+- `--seg_pub`: Number of segments to publish in output (Default: 3).
+- `--oneshot`: Process only one image pair and exit.
+
 ## Ontology
 
-The plugin will publish mean direction and and mean velocity of the cloud motion (cmv.mean.dir, cmv.mean.vel). The plugin will also publish images when the mean cloud speed is higher than a threshold.
+The plugin will publish the following data:
+- **Mean direction**: `cmv.mean.dir`  
+- **Mean velocity**: `cmv.mean.vel`  
 
+If the mean cloud speed exceeds a user-defined threshold (`--thr`), the plugin will also upload the processed images.
 
 ## Inference from Sage codes
-To query the output from the plugin, you can do with python library 'sage_data_client':
-```
+
+To query the output from the plugin, you can do so using the Python library `sage_data_client`:
+
+```python
 import sage_data_client
 
-# query and load data into pandas data frame
+# Query and load data into a pandas DataFrame
 df = sage_data_client.query(
     start="-1h",
     filter={
@@ -46,9 +57,9 @@ df = sage_data_client.query(
     }
 )
 
-# print results in data frame
+# Print results in DataFrame
 print(df)
-```
+
 For more information, please see [Access and use data documentation](https://docs.sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
 
 ### References
