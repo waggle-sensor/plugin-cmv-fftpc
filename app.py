@@ -22,6 +22,9 @@ from waggle.data.vision import Camera
 from inf import getInfoDict, cropMarginInfo, cropFrame
 import cv2
 
+# Configure logger
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 def upload_image(sky_curr, timestamp, thres_otsu, plugin):
     img2_file_name = f"img2_{timestamp}.jpg"
@@ -118,11 +121,13 @@ def analyze_and_publish_segments(segments, mag, ang, plugin, sample, args):
 def main(args):
     inf = initialize_plugin(args)
     fcount = 0
-
     with Plugin() as plugin, Camera(args.input) as camera:
         frame_time_curr, sky_curr, fcount = process_frame(camera, inf, fcount)
 
+        logger.info("Starting main loop")
         while True:
+            logger.debug("Inside main loop")
+            logger.debug("Processing frame")
             if inf["interval"] > 0:
                 time.sleep(inf["interval"])
 
@@ -130,16 +135,20 @@ def main(args):
                 frame_time_prev = frame_time_curr
                 frame_time_curr, sky_new, fcount = process_frame(camera, inf, fcount)
 
+            logger.debug("Computing optical flow")
             vel_factor = 60 / (frame_time_curr - frame_time_prev)
             sky_prev, sky_curr = sky_curr, sky_new
 
             flow, mag, ang = compute_optical_flow(sky_prev, sky_curr, inf, vel_factor)
+            logger.debug("Thresholding and publishing")
             should_upload, thres_otsu = threshold_and_publish(mag, plugin, camera.snapshot(), args.thr)
 
             if should_upload:
                 upload_image(sky_curr, camera.snapshot().timestamp, thres_otsu, plugin)
 
+            logger.debug("Creating segments")
             segments, _ = create_segments(sky_curr, mag, ang, args.segments)
+            logger.debug("Analyzing and publishing segments")
             analyze_and_publish_segments(segments, mag, ang, plugin, camera.snapshot(), args)
 
             if args.oneshot:
@@ -155,7 +164,7 @@ if __name__ == "__main__":
     parser.add_argument("--q", type=int, default=2)
     parser.add_argument("--thr", type=int, default=50)
     parser.add_argument("--segments", type=int, default=100)
-    parser.add_argument("--seg_pub", type=int, default=3)
+    parser.add_argument("--seg_pub", type=int, default=9)
     parser.add_argument("--oneshot", action="store_true")
     args = parser.parse_args()
     main(args)

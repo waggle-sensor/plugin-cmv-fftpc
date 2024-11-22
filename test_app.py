@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
+import logging
+import io
 import numpy as np
 import cv2
 
@@ -108,6 +110,21 @@ class TestOpticalFlowApp(unittest.TestCase):
             f"img2_{timestamp}.jpg", meta={"thres_otsu": "5"}, timestamp=timestamp
         )
 
+    def setUp(self):
+            self.args = MagicMock()
+            self.args.input = "file://test-data/sgptsimovieS01.a1.20160726.000000.mpg"
+            self.args.i = 1 # for testing
+            self.args.c = 0  # Red channel
+            self.args.k = 0.9
+            self.args.q = 2
+            self.args.thr = 1000 # for testing
+            self.args.segments = 25
+            self.args.seg_pub = 3
+            self.args.oneshot = True
 
+    def test_main(self):
+        """Test the main function with the actual input file."""
+        main(self.args)
+    
 if __name__ == "__main__":
     unittest.main()
