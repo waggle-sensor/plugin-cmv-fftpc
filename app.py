@@ -68,10 +68,10 @@ def compute_optical_flow(sky_prev, sky_curr, inf, vel_factor):
     return flow, mag, ang
 
 
-def threshold_and_publish(mag, plugin, sample):
+def threshold_and_publish(mag, plugin, sample, thres_threshold):
     thres_otsu = np.round(threshold_otsu(mag))
     plugin.publish("cmv.thresh.otsu", float(thres_otsu), timestamp=sample.timestamp)
-    return thres_otsu
+    return thres_otsu > thres_threshold, thres_otsu
 
 
 def create_segments(image, mag, ang, num_seg):
@@ -141,12 +141,13 @@ def main(args):
 
             flow, mag, ang = compute_optical_flow(sky_prev, sky_curr, inf, vel_factor)
             logger.debug("Thresholding and publishing")
-            thres_otsu = threshold_and_publish(mag, plugin, camera.snapshot(), args.thr)
+            should_upload, thres_otsu = threshold_and_publish(mag, plugin, camera.snapshot(), args.max_thr)
 
-            if thres_otsu < args.min_val or thres_otsu > args.thr:
+            if thres_otsu >= args.max_thr:
                 upload_image(sky_curr, camera.snapshot().timestamp, thres_otsu, plugin)
 
-            if thres_otsu < args.min_val:
+            if thres_otsu <= args.min_thr:
+                upload_image(sky_curr, camera.snapshot().timestamp, thres_otsu, plugin)
                 break
 
             logger.debug("Creating segments")
@@ -165,8 +166,8 @@ if __name__ == "__main__":
     parser.add_argument("--c", type=int, default=0)
     parser.add_argument("--k", type=float, default=0.9)
     parser.add_argument("--q", type=int, default=2)
-    parser.add_argument("--thr", type=int, default=10)
-    parser.add_argument("--min_val", type=int, default=5)
+    parser.add_argument("--max_thr", type=int, default=10)
+    parser.add_argument("--min_thr", type=int, default=2)
     parser.add_argument("--segments", type=int, default=100)
     parser.add_argument("--seg_pub", type=int, default=9)
     parser.add_argument("--oneshot", action="store_true")
